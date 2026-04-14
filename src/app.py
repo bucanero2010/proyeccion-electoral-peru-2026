@@ -225,6 +225,14 @@ def main():
     df = load_data(selected_file)
     hierarchy = build_hierarchy(df)
 
+    # Extract refresh timestamp from filename
+    import re
+    ts_match = re.search(r"(\d{8})_(\d{6})", os.path.basename(selected_file))
+    if ts_match:
+        d, t = ts_match.group(1), ts_match.group(2)
+        refresh_str = f"{d[:4]}-{d[4:6]}-{d[6:8]} {t[:2]}:{t[2:4]}:{t[4:6]}"
+        st.caption(f"🔄 Última actualización de datos: {refresh_str}")
+
     # Load similarity index if enabled
     sim_index = None
     if use_similarity:
