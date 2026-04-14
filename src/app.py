@@ -9,6 +9,7 @@ import pandas as pd
 import plotly.express as px
 import glob
 from collections import defaultdict
+import numpy as np
 
 st.set_page_config(
     page_title="Proyección Electoral Perú 2026",
@@ -88,7 +89,7 @@ def build_hierarchy(df):
     }
 
 
-def project(df, hierarchy, threshold):
+def project(df, hierarchy, threshold, sim_index=None):
     h = hierarchy
     results = []
 
@@ -112,12 +113,32 @@ def project(df, hierarchy, threshold):
 
     votos_by_d = df.groupby(["ambito", "region", "provincia", "distrito", "partido"])["votos"].sum()
 
+    # Build ubigeo-keyed lookups for similarity fallback
+    ubigeo_to_key = {}
+    ubigeo_props = {}
+    ubigeo_pcts = {}
+    for key_d in actas_d.index:
+        row_a = actas_d.loc[key_d]
+        ub = df.loc[(df["ambito"] == key_d[0]) & (df["region"] == key_d[1]) &
+                    (df["provincia"] == key_d[2]) & (df["distrito"] == key_d[3]),
+                    "ubigeo_distrito"].iloc[0] if "ubigeo_distrito" in df.columns else None
+        if ub:
+            ubigeo_to_key[ub] = key_d
+            ubigeo_props[ub] = pd_d.get(key_d, {})
+            ubigeo_pcts[ub] = row_a["pct_actas"]
+
     for key_d, row_a in actas_d.iterrows():
         ambito, region, provincia, distrito = key_d
         total_actas = row_a["total_actas"]
         actas_contab = row_a["actas_contab"]
         pct = row_a["pct_actas"]
         key_p, key_r, key_a = (ambito, region, provincia), (ambito, region), (ambito,)
+
+        # Find ubigeo for this distrito
+        ub_match = df.loc[(df["ambito"] == ambito) & (df["region"] == region) &
+                          (df["provincia"] == provincia) & (df["distrito"] == distrito),
+                          "ubigeo_distrito"]
+        current_ubigeo = ub_match.iloc[0] if len(ub_match) > 0 and "ubigeo_distrito" in df.columns else None
 
         if ambito == "EXTRANJERO":
             if pct >= 100.0 or total_actas == 0 or pct >= threshold:
@@ -126,14 +147,24 @@ def project(df, hierarchy, threshold):
                 source, props = "extranjero", pd_a.get(key_a, {})
         elif pct >= 100.0 or total_actas == 0 or pct >= threshold:
             source, props = "distrito", pd_d.get(key_d, {})
-        elif key_p in actas_p.index and actas_p.loc[key_p, "pct_actas"] >= threshold:
-            source, props = "provincia", pd_p.get(key_p, {})
-        elif key_r in actas_r.index and actas_r.loc[key_r, "pct_actas"] >= threshold:
-            source, props = "region", pd_r.get(key_r, {})
-        elif key_a in actas_a.index and actas_a.loc[key_a, "pct_actas"] >= threshold:
-            source, props = "pais", pd_a.get(key_a, {})
         else:
-            source, props = "total", pd_t
+            # Try similarity-based fallback first
+            sim_props = None
+            if sim_index and current_ubigeo:
+                from src.similarity import get_similar_district_proportions
+                sim_props = get_similar_district_proportions(
+                    current_ubigeo, sim_index, ubigeo_props, ubigeo_pcts, threshold)
+
+            if sim_props:
+                source, props = "similitud", sim_props
+            elif key_p in actas_p.index and actas_p.loc[key_p, "pct_actas"] >= threshold:
+                source, props = "provincia", pd_p.get(key_p, {})
+            elif key_r in actas_r.index and actas_r.loc[key_r, "pct_actas"] >= threshold:
+                source, props = "region", pd_r.get(key_r, {})
+            elif key_a in actas_a.index and actas_a.loc[key_a, "pct_actas"] >= threshold:
+                source, props = "pais", pd_a.get(key_a, {})
+            else:
+                source, props = "total", pd_t
 
         counted = sum(votos_by_d.get((*key_d, p), 0) for p in props)
         if actas_contab > 0 and total_actas > 0:
@@ -154,6 +185,13 @@ def project(df, hierarchy, threshold):
     return pd.DataFrame(results)
 
 
+@st.cache_data
+def load_similarity_index():
+    from src.similarity import build_similarity_index
+    sim_index, _ = build_similarity_index(k=20)
+    return sim_index
+
+
 def main():
     st.title("🗳️ Proyección Electoral Presidencial Perú 2026")
 
@@ -168,10 +206,22 @@ def main():
                                      format_func=lambda x: os.path.basename(x))
         threshold = st.slider("Umbral mínimo % actas", 5, 80, 30, 5,
                               help="Si un distrito tiene menos de este %, se usa el nivel geográfico superior")
+        use_similarity = st.checkbox("Usar similitud 2021", value=True,
+                                     help="Para distritos con pocas actas, usar la proporción de distritos que votaron similar en 2021")
 
     df = load_data(selected_file)
     hierarchy = build_hierarchy(df)
-    proj = project(df, hierarchy, threshold)
+
+    # Load similarity index if enabled
+    sim_index = None
+    if use_similarity:
+        sim_file = os.path.join(DATA_DIR, "2021_presidencial-resultados-partidos.csv")
+        if os.path.exists(sim_file):
+            sim_index = load_similarity_index()
+        else:
+            st.sidebar.warning("No se encontró datos 2021. Similitud desactivada.")
+
+    proj = project(df, hierarchy, threshold, sim_index=sim_index)
 
     meta_cols = {"ambito", "region", "provincia", "distrito", "total_actas",
                  "actas_contabilizadas", "pct_actas", "fuente"}
@@ -310,7 +360,12 @@ de que las actas pendientes se distribuyen en la misma proporción que las ya co
 
 2. **Selección de proporción por distrito:**
    - **≥ {int(threshold)}% actas** → proporción del propio distrito
-   - **< {int(threshold)}%** → cascada: provincia → región → país (el primero que supere el umbral)
+   - **< {int(threshold)}%** → cascada con prioridad:
+     1. **Similitud 2021** {"(activado ✅)" if sim_index else "(desactivado)"}: promedio ponderado
+        de distritos que votaron de forma similar en las elecciones 2021, usando similitud
+        coseno sobre los vectores de participación por partido. Solo usa vecinos que ya
+        tengan ≥ {int(threshold)}% de actas en 2026.
+     2. **Provincia** → **Región** → **País** (cascada geográfica tradicional)
    - **Extranjero:** si < {int(threshold)}%, usa directamente el total de EXTRANJERO
 
 3. **Proyección:** `votos_contados × (total_actas / actas_contabilizadas)`,
@@ -318,10 +373,11 @@ de que las actas pendientes se distribuyen en la misma proporción que las ya co
 
 4. **Agregación:** Suma de todos los distritos = resultado nacional estimado.
 
-**Limitaciones:** Asume distribución uniforme de actas pendientes. No incorpora encuestas
-ni conteos rápidos. Los resultados cambian conforme la ONPE avanza.
+**Limitaciones:** Asume distribución uniforme de actas pendientes. La similitud 2021
+captura patrones históricos que pueden no repetirse. No incorpora encuestas ni conteos rápidos.
 
 **Fuente:** [ONPE - Resultados Electorales](https://resultadoelectoral.onpe.gob.pe/main/presidenciales)
+| [Datos 2021](https://github.com/jmcastagnetto/2021-elecciones-generales-peru-datos-de-onpe)
 """)
 
     # Downloads
