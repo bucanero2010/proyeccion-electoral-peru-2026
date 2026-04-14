@@ -10,7 +10,7 @@ import csv
 import numpy as np
 from collections import defaultdict
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 FILE_2021 = os.path.join(DATA_DIR, "2021_presidencial-resultados-partidos.csv")
 
 

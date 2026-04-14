@@ -35,7 +35,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 SPECIAL = {"VOTOS EN BLANCO", "VOTOS NULOS"}
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
 
 
 @st.cache_data
@@ -151,7 +151,7 @@ def project(df, hierarchy, threshold, sim_index=None):
             # Try similarity-based fallback first
             sim_props = None
             if sim_index and current_ubigeo:
-                from src.similarity import get_similar_district_proportions
+                from similarity import get_similar_district_proportions
                 sim_props = get_similar_district_proportions(
                     current_ubigeo, sim_index, ubigeo_props, ubigeo_pcts, threshold)
 
@@ -187,7 +187,7 @@ def project(df, hierarchy, threshold, sim_index=None):
 
 @st.cache_data
 def load_similarity_index():
-    from src.similarity import build_similarity_index
+    from similarity import build_similarity_index
     sim_index, _ = build_similarity_index(k=20)
     return sim_index
 
