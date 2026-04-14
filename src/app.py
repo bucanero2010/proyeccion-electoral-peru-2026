@@ -359,6 +359,69 @@ def main():
     st.dataframe(filtered[display].sort_values(["region", "provincia", "distrito"]),
                  use_container_width=True, height=500)
 
+    # ── Time-series trend ──
+    st.divider()
+    st.subheader("📈 Evolución de la proyección")
+    snapshot_file = os.path.join(DATA_DIR, "snapshots.csv")
+    if os.path.exists(snapshot_file):
+        import json
+        snaps = pd.read_csv(snapshot_file)
+        if len(snaps) >= 1:
+            # Parse top candidates from each snapshot
+            trend_rows = []
+            for _, snap in snaps.iterrows():
+                try:
+                    top_cands = json.loads(snap["top_candidates_json"])
+                    for c in top_cands:
+                        trend_rows.append({
+                            "timestamp": snap["timestamp"],
+                            "pct_actas": snap["pct_actas_global"],
+                            "partido": c["partido"],
+                            "pct_votos": c["pct"],
+                        })
+                except:
+                    pass
+
+            if trend_rows:
+                trend_df = pd.DataFrame(trend_rows)
+                # Show top 6 candidates from latest snapshot
+                latest = snaps.iloc[-1]
+                try:
+                    latest_top = [c["partido"] for c in json.loads(latest["top_candidates_json"])[:6]]
+                except:
+                    latest_top = []
+
+                if latest_top:
+                    trend_filtered = trend_df[trend_df["partido"].isin(latest_top)]
+                    fig_trend = px.line(
+                        trend_filtered, x="pct_actas", y="pct_votos",
+                        color="partido", markers=True,
+                        labels={"pct_actas": "% Actas contabilizadas", "pct_votos": "% Votos válidos",
+                                "partido": "Partido"},
+                    )
+                    fig_trend.update_layout(
+                        height=400,
+                        legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5),
+                        margin=dict(l=10, r=10, t=10, b=10),
+                    )
+                    st.plotly_chart(fig_trend, use_container_width=True)
+
+                # Actas progress
+                fig_actas = px.line(
+                    snaps, x="timestamp", y="pct_actas_global", markers=True,
+                    labels={"timestamp": "Fecha/hora", "pct_actas_global": "% Actas contabilizadas"},
+                )
+                fig_actas.update_layout(height=250, margin=dict(l=10, r=10, t=10, b=10))
+                st.plotly_chart(fig_actas, use_container_width=True)
+
+                st.caption(f"{len(snaps)} snapshots registrados. Ejecuta el scraper periódicamente para más datos.")
+            else:
+                st.info("Snapshots sin datos de candidatos.")
+        else:
+            st.info("Solo 1 snapshot. Ejecuta el scraper de nuevo para ver la evolución.")
+    else:
+        st.info("No hay snapshots aún. Ejecuta el scraper para empezar a trackear la evolución.")
+
     # Methodology
     st.divider()
     st.subheader("📐 Metodología")

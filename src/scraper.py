@@ -172,6 +172,19 @@ def main():
     print(f"API requests: {request_count}")
     print(f"{'='*60}")
 
+    # Save snapshot for time-series tracking
+    try:
+        import pandas as pd
+        import sys
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from snapshot import save_snapshot
+        snap_df = pd.read_csv(filename, dtype={"ubigeo_departamento": str, "ubigeo_provincia": str, "ubigeo_distrito": str})
+        for col in ["votos", "total_actas", "actas_contabilizadas", "pct_actas_contabilizadas"]:
+            snap_df[col] = pd.to_numeric(snap_df[col], errors="coerce").fillna(0)
+        save_snapshot(snap_df)
+    except Exception as e:
+        print(f"  Warning: no se pudo guardar snapshot: {e}")
+
 
 if __name__ == "__main__":
     main()
