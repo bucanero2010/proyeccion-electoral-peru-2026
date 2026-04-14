@@ -169,6 +169,11 @@ def main():
     n_distritos = len(proj)
     pct_global = proj["actas_contabilizadas"].sum() / proj["total_actas"].sum() * 100 if proj["total_actas"].sum() > 0 else 0
 
+    # Compute actual (current counted) totals from raw data
+    actual_by_partido = df.groupby("partido")["votos"].sum().sort_values(ascending=False)
+    actual_candidatos = actual_by_partido[[p for p in actual_by_partido.index if p not in SPECIAL]]
+    actual_validos = actual_candidatos.sum()
+
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Distritos", f"{n_distritos:,}")
     c2.metric("Actas contabilizadas", f"{pct_global:.1f}%")
@@ -195,6 +200,7 @@ def main():
     st.subheader("Tabla resumen")
     summary_df = pd.DataFrame({
         "Partido": candidatos.index,
+        "Votos actuales": [int(actual_candidatos.get(p, 0)) for p in candidatos.index],
         "Votos proyectados": candidatos.values.astype(int),
         "% Votos válidos": (candidatos / total_validos * 100).round(3).values,
     }).reset_index(drop=True)
@@ -204,6 +210,46 @@ def main():
     cb, cn = st.columns(2)
     cb.metric("Votos en blanco (proy.)", f"{int(especiales.get('VOTOS EN BLANCO', 0)):,}")
     cn.metric("Votos nulos (proy.)", f"{int(especiales.get('VOTOS NULOS', 0)):,}")
+
+    st.divider()
+
+    # ── Actual vs Proyectado ──
+    st.subheader("Actual vs Proyectado")
+
+    # Build comparison dataframe for top N
+    top_partidos = candidatos.head(top_n).index
+    compare_df = pd.DataFrame({
+        "Partido": top_partidos,
+        "Votos actuales": [int(actual_candidatos.get(p, 0)) for p in top_partidos],
+        "% Actual": [(actual_candidatos.get(p, 0) / actual_validos * 100).round(2) if actual_validos > 0 else 0 for p in top_partidos],
+        "Votos proyectados": [int(candidatos.get(p, 0)) for p in top_partidos],
+        "% Proyectado": [(candidatos.get(p, 0) / total_validos * 100).round(2) if total_validos > 0 else 0 for p in top_partidos],
+    }).reset_index(drop=True)
+    compare_df["Diferencia votos"] = compare_df["Votos proyectados"] - compare_df["Votos actuales"]
+    compare_df["Δ %"] = (compare_df["% Proyectado"] - compare_df["% Actual"]).round(3)
+    compare_df.index += 1
+
+    st.dataframe(compare_df, use_container_width=True, height=min(500, len(compare_df) * 38 + 40))
+
+    # Grouped bar chart: actual vs projected %
+    import plotly.graph_objects as go
+    fig_cmp = go.Figure()
+    fig_cmp.add_trace(go.Bar(
+        y=compare_df["Partido"], x=compare_df["% Actual"],
+        name="% Actual", orientation="h", marker_color="#636EFA",
+        text=compare_df["% Actual"], texttemplate="%{text:.2f}%", textposition="outside",
+    ))
+    fig_cmp.add_trace(go.Bar(
+        y=compare_df["Partido"], x=compare_df["% Proyectado"],
+        name="% Proyectado", orientation="h", marker_color="#00CC96",
+        text=compare_df["% Proyectado"], texttemplate="%{text:.2f}%", textposition="outside",
+    ))
+    fig_cmp.update_layout(
+        barmode="group", yaxis={"categoryorder": "total ascending"},
+        height=max(400, top_n * 55), legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        margin=dict(r=80),
+    )
+    st.plotly_chart(fig_cmp, use_container_width=True)
 
     st.divider()
 
