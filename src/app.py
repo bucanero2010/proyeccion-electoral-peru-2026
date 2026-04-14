@@ -45,9 +45,13 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 
 @st.cache_data
 def load_data(filename):
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename, dtype={"ubigeo_departamento": str, "ubigeo_provincia": str, "ubigeo_distrito": str})
     for col in ["votos", "total_actas", "actas_contabilizadas", "pct_actas_contabilizadas"]:
         df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+    # Ensure ubigeo columns are zero-padded 6-digit strings
+    for col in ["ubigeo_departamento", "ubigeo_provincia", "ubigeo_distrito"]:
+        if col in df.columns:
+            df[col] = df[col].fillna("").astype(str).str.zfill(6)
     return df
 
 
