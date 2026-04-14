@@ -16,6 +16,23 @@ st.set_page_config(
     layout="wide",
 )
 
+# Mobile-friendly CSS
+st.markdown("""
+<style>
+/* Tighter padding on mobile */
+@media (max-width: 768px) {
+    .block-container { padding: 1rem 0.5rem !important; }
+    [data-testid="stMetric"] { padding: 0.5rem 0.3rem; }
+    [data-testid="stMetricLabel"] { font-size: 0.75rem !important; }
+    [data-testid="stMetricValue"] { font-size: 1.1rem !important; }
+    h1 { font-size: 1.4rem !important; }
+    h2, h3 { font-size: 1.1rem !important; }
+}
+/* Scrollable tables on mobile */
+[data-testid="stDataFrame"] { overflow-x: auto !important; }
+</style>
+""", unsafe_allow_html=True)
+
 SPECIAL = {"VOTOS EN BLANCO", "VOTOS NULOS"}
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
@@ -174,11 +191,13 @@ def main():
     actual_candidatos = actual_by_partido[[p for p in actual_by_partido.index if p not in SPECIAL]]
     actual_validos = actual_candidatos.sum()
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Distritos", f"{n_distritos:,}")
-    c2.metric("Actas contabilizadas", f"{pct_global:.1f}%")
-    c3.metric("Votos válidos (proy.)", f"{int(total_validos):,}")
-    c4.metric("Votos emitidos (proy.)", f"{int(total_emitidos):,}")
+    # KPIs — 2x2 grid works better on mobile than 4 columns
+    r1c1, r1c2 = st.columns(2)
+    r1c1.metric("Distritos", f"{n_distritos:,}")
+    r1c2.metric("Actas contabilizadas", f"{pct_global:.1f}%")
+    r2c1, r2c2 = st.columns(2)
+    r2c1.metric("Votos válidos (proy.)", f"{int(total_validos):,}")
+    r2c2.metric("Votos emitidos (proy.)", f"{int(total_emitidos):,}")
 
     st.divider()
 
@@ -192,8 +211,10 @@ def main():
     fig = px.bar(chart_df, x="% Válidos", y="Partido", orientation="h", text="% Válidos",
                  color="% Válidos", color_continuous_scale="RdYlGn")
     fig.update_layout(yaxis={"categoryorder": "total ascending"}, height=max(400, top_n * 45),
-                      showlegend=False, coloraxis_showscale=False)
-    fig.update_traces(texttemplate="%{text:.2f}%", textposition="outside")
+                      showlegend=False, coloraxis_showscale=False,
+                      margin=dict(l=10, r=10, t=10, b=10))
+    fig.update_traces(texttemplate="%{text:.2f}%", textposition="inside",
+                      insidetextanchor="start")
     st.plotly_chart(fig, use_container_width=True)
 
     # Summary table
@@ -208,8 +229,8 @@ def main():
     st.dataframe(summary_df, use_container_width=True, height=min(600, len(summary_df) * 38 + 40))
 
     cb, cn = st.columns(2)
-    cb.metric("Votos en blanco (proy.)", f"{int(especiales.get('VOTOS EN BLANCO', 0)):,}")
-    cn.metric("Votos nulos (proy.)", f"{int(especiales.get('VOTOS NULOS', 0)):,}")
+    cb.metric("Votos en blanco", f"{int(especiales.get('VOTOS EN BLANCO', 0)):,}")
+    cn.metric("Votos nulos", f"{int(especiales.get('VOTOS NULOS', 0)):,}")
 
     st.divider()
 
@@ -237,17 +258,20 @@ def main():
     fig_cmp.add_trace(go.Bar(
         y=compare_df["Partido"], x=compare_df["% Actual"],
         name="% Actual", orientation="h", marker_color="#636EFA",
-        text=compare_df["% Actual"], texttemplate="%{text:.2f}%", textposition="outside",
+        text=compare_df["% Actual"], texttemplate="%{text:.2f}%", textposition="inside",
+        insidetextanchor="start",
     ))
     fig_cmp.add_trace(go.Bar(
         y=compare_df["Partido"], x=compare_df["% Proyectado"],
         name="% Proyectado", orientation="h", marker_color="#00CC96",
-        text=compare_df["% Proyectado"], texttemplate="%{text:.2f}%", textposition="outside",
+        text=compare_df["% Proyectado"], texttemplate="%{text:.2f}%", textposition="inside",
+        insidetextanchor="start",
     ))
     fig_cmp.update_layout(
         barmode="group", yaxis={"categoryorder": "total ascending"},
-        height=max(400, top_n * 55), legend=dict(orientation="h", yanchor="bottom", y=1.02),
-        margin=dict(r=80),
+        height=max(400, top_n * 55),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+        margin=dict(l=10, r=10, t=30, b=10),
     )
     st.plotly_chart(fig_cmp, use_container_width=True)
 
@@ -303,13 +327,10 @@ ni conteos rápidos. Los resultados cambian conforme la ONPE avanza.
     # Downloads
     st.divider()
     st.subheader("Descargar datos")
-    d1, d2 = st.columns(2)
-    with d1:
-        st.download_button("📥 Proyección por distrito", proj.to_csv(index=False).encode("utf-8"),
-                           "proyeccion_por_distrito.csv", "text/csv")
-    with d2:
-        st.download_button("📥 Resumen nacional", summary_df.to_csv(index=False).encode("utf-8"),
-                           "resumen_proyeccion.csv", "text/csv")
+    st.download_button("📥 Proyección por distrito (CSV)", proj.to_csv(index=False).encode("utf-8"),
+                       "proyeccion_por_distrito.csv", "text/csv", use_container_width=True)
+    st.download_button("📥 Resumen nacional (CSV)", summary_df.to_csv(index=False).encode("utf-8"),
+                       "resumen_proyeccion.csv", "text/csv", use_container_width=True)
 
 
 if __name__ == "__main__":
