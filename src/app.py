@@ -4,6 +4,11 @@ Streamlit app — Proyección de Resultados Electorales Presidenciales Perú 202
 """
 
 import os
+import sys
+
+# Ensure src/ is on the path for both local and Streamlit Cloud
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
