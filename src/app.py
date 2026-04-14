@@ -156,6 +156,8 @@ def project(df, hierarchy, threshold, sim_index=None):
             # Try similarity-based fallback first
             sim_props = None
             if sim_index and current_ubigeo:
+                import sys as _sys
+                _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
                 from similarity import get_similar_district_proportions
                 sim_props = get_similar_district_proportions(
                     current_ubigeo, sim_index, ubigeo_props, ubigeo_pcts, threshold)
@@ -192,6 +194,8 @@ def project(df, hierarchy, threshold, sim_index=None):
 
 @st.cache_data
 def load_similarity_index():
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from similarity import build_similarity_index
     sim_index, _ = build_similarity_index(k=20)
     return sim_index
