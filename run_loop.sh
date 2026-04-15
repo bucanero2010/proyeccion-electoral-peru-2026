@@ -16,12 +16,15 @@ while true; do
     # Run scraper
     python3 -m src.scraper
 
-    # Only keep the latest CSV (delete older ones to avoid bloating the repo)
+    # Only keep the latest CSV if it has data (delete older ones to avoid bloating the repo)
     LATEST=$(ls -t data/resultados_presidenciales_*.csv 2>/dev/null | head -1)
-    if [ -n "$LATEST" ]; then
+    if [ -n "$LATEST" ] && [ "$(wc -l < "$LATEST")" -gt 100 ]; then
         for f in data/resultados_presidenciales_*.csv; do
             [ "$f" != "$LATEST" ] && rm -f "$f"
         done
+    else
+        echo "$(date): Scraper produced empty/small file, keeping previous data."
+        [ -n "$LATEST" ] && rm -f "$LATEST"
     fi
 
     # Commit and push
