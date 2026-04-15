@@ -122,13 +122,34 @@ def main():
         "votos", "pct_votos_validos", "pct_votos_emitidos",
     ]
 
+    # Load previous data — keep 100% districts, re-fetch the rest
+    import glob
+    prev_files = sorted(glob.glob(os.path.join(DATA_DIR, "resultados_presidenciales_*.csv")))
+    completed_districts = {}  # {ubigeo_distrito: [rows]}
+    if prev_files:
+        import pandas as pd
+        prev = pd.read_csv(prev_files[-1], dtype=str)
+        prev["pct_actas_contabilizadas"] = pd.to_numeric(prev["pct_actas_contabilizadas"], errors="coerce").fillna(0)
+        complete = prev[prev["pct_actas_contabilizadas"] >= 100.0]
+        for ub, grp in complete.groupby("ubigeo_distrito"):
+            completed_districts[ub] = grp.to_dict("records")
+        print(f"Loaded {len(completed_districts)} completed districts from previous run")
+
     total_rows = 0
     total_distritos = 0
+    skipped = 0
     t0 = time.time()
 
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
+
+        # Write completed districts from previous run
+        for ub, rows in completed_districts.items():
+            for row in rows:
+                writer.writerow({k: row.get(k, "") for k in fieldnames})
+            total_rows += len(rows)
+            skipped += 1
 
         for id_ambito, ambito_name in [(1, "PERÚ"), (2, "EXTRANJERO")]:
             deptos = api_get("/ubigeos/departamentos", {
@@ -148,32 +169,37 @@ def main():
                         "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito,
                         "idUbigeoDepartamento": ub_d, "idUbigeoProvincia": ub_p})
 
-                    # Fetch all distritos in this provincia concurrently
-                    with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-                        futures = {
-                            pool.submit(fetch_distrito, id_ambito, ambito_name,
-                                        nom_d, ub_d, nom_p, ub_p, d): d
-                            for d in dists
-                        }
-                        for future in as_completed(futures):
-                            rows = future.result()
-                            for row in rows:
-                                writer.writerow(row)
-                            total_rows += len(rows)
-                            total_distritos += 1
+                    # Filter out already-completed districts
+                    to_fetch = [d for d in dists if d["ubigeo"] not in completed_districts]
+
+                    if to_fetch:
+                        with ThreadPoolExecutor(max_workers=WORKERS) as pool:
+                            futures = {
+                                pool.submit(fetch_distrito, id_ambito, ambito_name,
+                                            nom_d, ub_d, nom_p, ub_p, d): d
+                                for d in to_fetch
+                            }
+                            for future in as_completed(futures):
+                                rows = future.result()
+                                for row in rows:
+                                    writer.writerow(row)
+                                total_rows += len(rows)
+                                total_distritos += 1
 
                     f.flush()
-                    time.sleep(0.5)  # brief pause between provincias
+                    time.sleep(0.5)
                     elapsed = time.time() - t0
                     rate = total_distritos / elapsed if elapsed > 0 else 0
-                    print(f"  {ambito_name} > {nom_d} > {nom_p}: {len(dists)} dist "
-                          f"[{total_distritos} total, {rate:.1f} dist/s]")
+                    n_skipped = len(dists) - len(to_fetch)
+                    print(f"  {ambito_name} > {nom_d} > {nom_p}: "
+                          f"{len(to_fetch)} fetched, {n_skipped} cached "
+                          f"[{total_distritos + skipped} total, {rate:.1f} new/s]")
 
             print(f"\n{ambito_name} completado.\n")
 
     elapsed = time.time() - t0
     print(f"\n{'='*60}")
-    print(f"Completado: {total_rows} filas, {total_distritos} distritos")
+    print(f"Completado: {total_rows} filas, {total_distritos} nuevos + {skipped} cached")
     print(f"Tiempo: {elapsed/60:.1f} min")
     print(f"Archivo: {filename}")
     print(f"API requests: {request_count}")

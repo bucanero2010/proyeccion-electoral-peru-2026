@@ -122,6 +122,42 @@ def project(df, hierarchy, threshold, sim_index=None):
 
     votos_by_d = df.groupby(["ambito", "region", "provincia", "distrito", "partido"])["votos"].sum()
 
+    # Precompute avg votes-per-acta at each geographic level (for 0% actas districts)
+    total_votos_by_d = df.groupby(["ambito", "region", "provincia", "distrito"])["votos"].sum()
+    avg_vpa = {}  # {key: avg_votes_per_acta}
+    for key_d in actas_d.index:
+        row_a = actas_d.loc[key_d]
+        if row_a["actas_contab"] > 0:
+            avg_vpa[key_d] = total_votos_by_d.get(key_d, 0) / row_a["actas_contab"]
+
+    # Avg VPA by provincia
+    avg_vpa_p = {}
+    for key_p in actas_p.index:
+        row_p = actas_p.loc[key_p]
+        if row_p["actas_contab"] > 0:
+            mask = (df["ambito"] == key_p[0]) & (df["region"] == key_p[1]) & (df["provincia"] == key_p[2])
+            avg_vpa_p[key_p] = df.loc[mask, "votos"].sum() / row_p["actas_contab"]
+
+    # Avg VPA by region
+    avg_vpa_r = {}
+    for key_r in actas_r.index:
+        row_r = actas_r.loc[key_r]
+        if row_r["actas_contab"] > 0:
+            mask = (df["ambito"] == key_r[0]) & (df["region"] == key_r[1])
+            avg_vpa_r[key_r] = df.loc[mask, "votos"].sum() / row_r["actas_contab"]
+
+    # Avg VPA by ambito
+    avg_vpa_a = {}
+    for amb in df["ambito"].unique():
+        mask = df["ambito"] == amb
+        contab = h["actas_a"][h["actas_a"]["ambito"] == amb]["actas_contab"].sum()
+        if contab > 0:
+            avg_vpa_a[amb] = df.loc[mask, "votos"].sum() / contab
+
+    # Global avg VPA
+    total_contab = h["actas_a"]["actas_contab"].sum()
+    global_avg_vpa = df["votos"].sum() / total_contab if total_contab > 0 else 0
+
     # Build ubigeo-keyed lookups for similarity fallback
     ubigeo_to_key = {}
     ubigeo_props = {}
@@ -181,64 +217,20 @@ def project(df, hierarchy, threshold, sim_index=None):
         if actas_contab > 0 and total_actas > 0:
             estimated_total = counted * (total_actas / actas_contab)
         elif total_actas > 0 and counted == 0:
-            # No votes counted yet — estimate total using avg votes-per-acta
-            # from the geographic level that provided the proportions
+            # No votes counted — estimate volume from avg votes-per-acta
             if source == "similitud" and sim_index and current_ubigeo:
-                # Use avg votes-per-acta from similar districts
                 neighbors = sim_index.get(current_ubigeo, [])
-                vpa_sum, vpa_count = 0, 0
-                for n_ub, _ in neighbors:
-                    n_key = ubigeo_to_key.get(n_ub)
-                    if n_key and n_key in actas_d.index:
-                        n_row = actas_d.loc[n_key]
-                        if n_row["actas_contab"] > 0:
-                            n_counted = sum(votos_by_d.get((*n_key, p), 0) for p in props)
-                            vpa_sum += n_counted / n_row["actas_contab"]
-                            vpa_count += 1
-                            if vpa_count >= 5:
-                                break
-                if vpa_count > 0:
-                    avg_vpa = vpa_sum / vpa_count
-                    estimated_total = avg_vpa * total_actas
-                else:
-                    estimated_total = 0
-            elif source in ("provincia", "region", "pais", "extranjero", "total"):
-                # Use avg votes-per-acta from that geographic level
-                # Compute from the hierarchy's aggregated data
-                level_actas = None
-                level_votos_total = None
-                if source == "provincia" and key_p in actas_p.index:
-                    level_actas = actas_p.loc[key_p, "actas_contab"]
-                    level_votos_total = h["actas_p"].set_index(["ambito", "region", "provincia"]).loc[key_p, "actas_contab"]
-                    # Get votos from props_p
-                    p_props = pd_p.get(key_p, {})
-                    # total votos at provincia = sum of all distrito votos in that provincia
-                    prov_mask = (df["ambito"] == key_p[0]) & (df["region"] == key_p[1]) & (df["provincia"] == key_p[2])
-                    level_votos_total = df.loc[prov_mask, "votos"].sum()
-                    level_actas = actas_p.loc[key_p, "actas_contab"]
-                elif source == "region" and key_r in actas_r.index:
-                    reg_mask = (df["ambito"] == key_r[0]) & (df["region"] == key_r[1])
-                    level_votos_total = df.loc[reg_mask, "votos"].sum()
-                    level_actas = actas_r.loc[key_r, "actas_contab"]
-                elif source in ("pais", "extranjero") and key_a in actas_a.index:
-                    amb_mask = df["ambito"] == key_a[0]
-                    level_votos_total = df.loc[amb_mask, "votos"].sum()
-                    level_actas = actas_a.loc[key_a, "actas_contab"]
-                elif source in ("pais", "extranjero"):
-                    # Try with plain string key (pandas may not use tuple for single-col index)
-                    amb_key = key_a[0] if len(key_a) == 1 else key_a
-                    if amb_key in actas_a.index:
-                        amb_mask = df["ambito"] == key_a[0]
-                        level_votos_total = df.loc[amb_mask, "votos"].sum()
-                        level_actas = actas_a.loc[amb_key, "actas_contab"]
-                
-                if level_actas and level_actas > 0 and level_votos_total:
-                    avg_vpa = level_votos_total / level_actas
-                    estimated_total = avg_vpa * total_actas
-                else:
-                    estimated_total = 0
+                vpa_vals = [avg_vpa[ubigeo_to_key[n]] for n, _ in neighbors
+                            if n in ubigeo_to_key and ubigeo_to_key[n] in avg_vpa][:5]
+                estimated_total = (sum(vpa_vals) / len(vpa_vals) * total_actas) if vpa_vals else 0
+            elif source == "provincia":
+                estimated_total = avg_vpa_p.get(key_p, 0) * total_actas
+            elif source == "region":
+                estimated_total = avg_vpa_r.get(key_r, 0) * total_actas
+            elif source in ("pais", "extranjero"):
+                estimated_total = avg_vpa_a.get(ambito, 0) * total_actas
             else:
-                estimated_total = 0
+                estimated_total = global_avg_vpa * total_actas
         else:
             estimated_total = counted
 
