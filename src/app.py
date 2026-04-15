@@ -188,7 +188,14 @@ def project(df, hierarchy, threshold, sim_index=None):
         if ambito == "EXTRANJERO":
             if pct >= 100.0 or total_actas == 0 or pct >= threshold:
                 source, props = "distrito", pd_d.get(key_d, {})
+            elif key_p in actas_p.index and actas_p.loc[key_p, "pct_actas"] >= threshold:
+                # País level (e.g., all of Chile)
+                source, props = "ext_pais", pd_p.get(key_p, {})
+            elif key_r in actas_r.index and actas_r.loc[key_r, "pct_actas"] >= threshold:
+                # Continente level (e.g., all of AMÉRICA)
+                source, props = "ext_continente", pd_r.get(key_r, {})
             else:
+                # Total EXTRANJERO
                 source, props = "extranjero", pd_a.get(key_a, {})
         elif pct >= 100.0 or total_actas == 0 or pct >= threshold:
             source, props = "distrito", pd_d.get(key_d, {})
@@ -229,6 +236,10 @@ def project(df, hierarchy, threshold, sim_index=None):
                 estimated_total = avg_vpa_r.get(key_r, 0) * total_actas
             elif source in ("pais", "extranjero"):
                 estimated_total = avg_vpa_a.get(ambito, 0) * total_actas
+            elif source == "ext_pais":
+                estimated_total = avg_vpa_p.get(key_p, avg_vpa_a.get(ambito, 0)) * total_actas
+            elif source == "ext_continente":
+                estimated_total = avg_vpa_r.get(key_r, avg_vpa_a.get(ambito, 0)) * total_actas
             else:
                 estimated_total = global_avg_vpa * total_actas
         else:
@@ -590,7 +601,7 @@ de que las actas pendientes se distribuyen en la misma proporción que las ya co
         coseno sobre los vectores de participación por partido. Solo usa vecinos que ya
         tengan ≥ {int(threshold)}% de actas en 2026.
      2. **Provincia** → **Región** → **País** (cascada geográfica tradicional)
-   - **Extranjero:** si < {int(threshold)}%, usa directamente el total de EXTRANJERO
+   - **Extranjero:** cascada: ciudad → **país** (ej: todo Chile) → **continente** (ej: toda AMÉRICA) → total EXTRANJERO
 
 3. **Proyección:** `votos_contados × (total_actas / actas_contabilizadas)`,
    distribuidos según la proporción seleccionada.

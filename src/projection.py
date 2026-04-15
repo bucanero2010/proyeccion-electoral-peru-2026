@@ -99,6 +99,10 @@ def project_distrito(key_d, agg, threshold=THRESHOLD):
     if ambito == "EXTRANJERO":
         if pct >= threshold:
             props, source = d["proportions"], "distrito"
+        elif agg["provincia"][key_p]["pct_actas"] >= threshold:
+            props, source = agg["provincia"][key_p]["proportions"], "ext_pais"
+        elif agg["region"][key_r]["pct_actas"] >= threshold:
+            props, source = agg["region"][key_r]["proportions"], "ext_continente"
         else:
             props, source = agg["pais"][key_a]["proportions"], "extranjero"
     elif pct >= threshold:
