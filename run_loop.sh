@@ -16,6 +16,9 @@ while true; do
     # Run scraper
     python3 -m src.scraper
 
+    # Run Monte Carlo simulation
+    python3 -m src.montecarlo
+
     # Only keep the latest CSV if it has data (delete older ones to avoid bloating the repo)
     LATEST=$(ls -t data/resultados_presidenciales_*.csv 2>/dev/null | head -1)
     if [ -n "$LATEST" ] && [ "$(wc -l < "$LATEST")" -gt 100 ]; then
@@ -29,7 +32,7 @@ while true; do
 
     # Commit and push
     git add data/
-    git commit -m "data: update results $(date '+%Y-%m-%d %H:%M')" 2>/dev/null
+    git commit -m "data: update results + montecarlo $(date '+%Y-%m-%d %H:%M')" 2>/dev/null
 
     if git push 2>/dev/null; then
         echo "$(date): Pushed to GitHub. Streamlit will reload."
