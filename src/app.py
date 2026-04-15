@@ -98,7 +98,7 @@ def build_hierarchy(df):
     }
 
 
-def project(df, hierarchy, threshold, sim_index=None):
+def project(df, hierarchy, threshold, sim_index=None, ext_sim_index=None):
     h = hierarchy
     results = []
 
@@ -188,15 +188,23 @@ def project(df, hierarchy, threshold, sim_index=None):
         if ambito == "EXTRANJERO":
             if pct >= 100.0 or total_actas == 0 or pct >= threshold:
                 source, props = "distrito", pd_d.get(key_d, {})
-            elif key_p in actas_p.index and actas_p.loc[key_p, "pct_actas"] >= threshold:
-                # País level (e.g., all of Chile)
-                source, props = "ext_pais", pd_p.get(key_p, {})
-            elif key_r in actas_r.index and actas_r.loc[key_r, "pct_actas"] >= threshold:
-                # Continente level (e.g., all of AMÉRICA)
-                source, props = "ext_continente", pd_r.get(key_r, {})
             else:
-                # Total EXTRANJERO
-                source, props = "extranjero", pd_a.get(key_a, {})
+                # Try extranjero similarity first
+                ext_sim_props = None
+                if ext_sim_index and current_ubigeo:
+                    import sys as _sys
+                    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                    from similarity import get_similar_district_proportions
+                    ext_sim_props = get_similar_district_proportions(
+                        current_ubigeo, ext_sim_index, ubigeo_props, ubigeo_pcts, threshold)
+                if ext_sim_props:
+                    source, props = "ext_similitud", ext_sim_props
+                elif key_p in actas_p.index and actas_p.loc[key_p, "pct_actas"] >= threshold:
+                    source, props = "ext_pais", pd_p.get(key_p, {})
+                elif key_r in actas_r.index and actas_r.loc[key_r, "pct_actas"] >= threshold:
+                    source, props = "ext_continente", pd_r.get(key_r, {})
+                else:
+                    source, props = "extranjero", pd_a.get(key_a, {})
         elif pct >= 100.0 or total_actas == 0 or pct >= threshold:
             source, props = "distrito", pd_d.get(key_d, {})
         else:
@@ -240,6 +248,11 @@ def project(df, hierarchy, threshold, sim_index=None):
                 estimated_total = avg_vpa_p.get(key_p, avg_vpa_a.get(ambito, 0)) * total_actas
             elif source == "ext_continente":
                 estimated_total = avg_vpa_r.get(key_r, avg_vpa_a.get(ambito, 0)) * total_actas
+            elif source == "ext_similitud" and ext_sim_index and current_ubigeo:
+                neighbors = ext_sim_index.get(current_ubigeo, [])
+                vpa_vals = [avg_vpa[ubigeo_to_key[n]] for n, _ in neighbors
+                            if n in ubigeo_to_key and ubigeo_to_key[n] in avg_vpa][:5]
+                estimated_total = (sum(vpa_vals) / len(vpa_vals) * total_actas) if vpa_vals else avg_vpa_a.get(ambito, 0) * total_actas
             else:
                 estimated_total = global_avg_vpa * total_actas
         else:
@@ -262,9 +275,10 @@ def project(df, hierarchy, threshold, sim_index=None):
 def load_similarity_index():
     import sys as _sys
     _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from similarity import build_similarity_index
+    from similarity import build_similarity_index, build_extranjero_similarity_index
     sim_index, _ = build_similarity_index(k=20)
-    return sim_index
+    ext_sim_index = build_extranjero_similarity_index(k=15)
+    return sim_index, ext_sim_index
 
 
 def main():
@@ -298,14 +312,15 @@ def main():
 
     # Load similarity index if enabled
     sim_index = None
+    ext_sim_index = None
     if use_similarity:
         sim_file = os.path.join(DATA_DIR, "2021_presidencial-resultados-partidos.csv")
         if os.path.exists(sim_file):
-            sim_index = load_similarity_index()
+            sim_index, ext_sim_index = load_similarity_index()
         else:
             st.sidebar.warning("No se encontró datos 2021. Similitud desactivada.")
 
-    proj = project(df, hierarchy, threshold, sim_index=sim_index)
+    proj = project(df, hierarchy, threshold, sim_index=sim_index, ext_sim_index=ext_sim_index)
 
     meta_cols = {"ambito", "region", "provincia", "distrito", "total_actas",
                  "actas_contabilizadas", "pct_actas", "fuente"}

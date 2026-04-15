@@ -78,6 +78,48 @@ def build_similarity_index(k=20):
     return sim_index, ubigeos
 
 
+FILE_2021_EXT = os.path.join(DATA_DIR, "2021_extranjero_resultados.csv")
+
+
+def build_extranjero_similarity_index(k=20):
+    """
+    Build similarity index for Extranjero districts using 2021 overseas voting data.
+    Returns:
+        sim_index: dict {ubigeo: [(neighbor_ubigeo, similarity_score), ...]}
+    """
+    if not os.path.exists(FILE_2021_EXT):
+        return {}
+
+    with open(FILE_2021_EXT, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    if not rows:
+        return {}
+
+    # Get partido columns (everything after ubigeo/dept/prov/dist)
+    partidos = [c for c in rows[0].keys() if c not in ("ubigeo", "departamento", "provincia", "distrito")]
+    ubigeos = [r["ubigeo"] for r in rows]
+
+    vectors = np.zeros((len(ubigeos), len(partidos)))
+    for i, r in enumerate(rows):
+        for j, p in enumerate(partidos):
+            vectors[i, j] = float(r[p] or 0)
+        total = vectors[i].sum()
+        if total > 0:
+            vectors[i] /= total
+
+    sim_matrix = cosine_similarity_matrix(vectors)
+
+    sim_index = {}
+    for i, ub in enumerate(ubigeos):
+        scores = sim_matrix[i]
+        top_indices = np.argsort(scores)[::-1][1:k+1]
+        sim_index[ub] = [(ubigeos[j], float(scores[j])) for j in top_indices]
+
+    return sim_index
+
+
 def get_similar_district_proportions(target_ubigeo, sim_index, district_props, district_pcts, threshold, k=10):
     """
     For a target distrito with insufficient data, compute vote proportions
