@@ -59,16 +59,24 @@ def run(threshold=30):
     votos_pivot = votos_pivot.reindex(pd.MultiIndex.from_tuples(proj_keys), fill_value=0)
     counted = votos_pivot.values.astype(float)
 
-    remaining = np.clip(projected.sum(axis=1) - counted.sum(axis=1), 0, None)
-    proj_totals = projected.sum(axis=1, keepdims=True)
-    proj_props = np.where(proj_totals > 0, projected / proj_totals, 0)
+    # Remaining per partido per distrito = projected - counted
+    remaining_per = np.clip(projected - counted, 0, None)  # (n_dist, n_partidos)
+    remaining_total = remaining_per.sum(axis=1)  # (n_dist,)
+
+    # Proportions of remaining votes (for Dirichlet noise)
+    rem_totals = remaining_total[:, None]
+    rem_props = np.where(rem_totals > 0, remaining_per / rem_totals, 0)
+
     pct_actas = proj["pct_actas"].values.astype(float)
     n_effective = np.clip(pct_actas / 100 * 50, 1, 100)
 
-    sim_mask = np.where(remaining > 10)[0]
+    sim_mask = np.where(remaining_total > 10)[0]
     fixed_totals = counted.sum(axis=0)
-    s_props = proj_props[sim_mask]
-    s_remaining = remaining[sim_mask]
+    # The "expected" remaining per partido (mean of MC should match projection)
+    expected_remaining = remaining_per.sum(axis=0)
+
+    s_rem_props = rem_props[sim_mask]
+    s_remaining = remaining_total[sim_mask]
     s_n_eff = n_effective[sim_mask]
 
     print(f"Running {N_SIM:,} simulations for {len(sim_mask)} distritos...")
@@ -77,7 +85,7 @@ def run(threshold=30):
     for s in range(N_SIM):
         extra = np.zeros(n_partidos)
         for i in range(len(sim_mask)):
-            alpha = s_props[i] * s_n_eff[i] + 0.001
+            alpha = s_rem_props[i] * s_n_eff[i] + 0.001
             extra += np.random.dirichlet(alpha) * s_remaining[i]
         sim_results[s] = fixed_totals + extra
 
