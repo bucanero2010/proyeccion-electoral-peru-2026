@@ -231,7 +231,8 @@ def main():
     if ts_match:
         d, t = ts_match.group(1), ts_match.group(2)
         refresh_str = f"{d[:4]}-{d[4:6]}-{d[6:8]} {t[:2]}:{t[2:4]}:{t[4:6]}"
-        st.caption(f"🔄 Última actualización de datos: {refresh_str}")
+    else:
+        refresh_str = "desconocida"
 
     # Load similarity index if enabled
     sim_index = None
@@ -261,6 +262,13 @@ def main():
     actual_by_partido = df.groupby("partido")["votos"].sum().sort_values(ascending=False)
     actual_candidatos = actual_by_partido[[p for p in actual_by_partido.index if p not in SPECIAL]]
     actual_validos = actual_candidatos.sum()
+
+    # ── Projection banner ──
+    st.warning(
+        f"⚠️ **PROYECCIÓN** — Basada en {pct_global:.1f}% de actas contabilizadas. "
+        f"No es el resultado oficial. Última actualización: {refresh_str}",
+        icon="⚠️",
+    )
 
     # KPIs — 2x2 grid works better on mobile than 4 columns
     r1c1, r1c2 = st.columns(2)
@@ -352,6 +360,35 @@ def main():
     st.subheader("Fuente de proporción por distrito")
     src = proj["fuente"].value_counts()
     st.plotly_chart(px.pie(values=src.values, names=src.index), use_container_width=True)
+
+    st.divider()
+
+    # ── Region progress ──
+    st.subheader("📊 Progreso por región")
+    region_progress = proj.groupby(["ambito", "region"]).agg(
+        total_actas=("total_actas", "sum"),
+        actas_contab=("actas_contabilizadas", "sum"),
+        n_distritos=("distrito", "count"),
+    ).reset_index()
+    # count is per-partido row, divide by unique distritos
+    region_progress["n_distritos"] = proj.groupby(["ambito", "region"])["distrito"].nunique().values
+    region_progress["pct_actas"] = (region_progress["actas_contab"] / region_progress["total_actas"] * 100).fillna(0).round(1)
+    region_progress = region_progress.sort_values("pct_actas", ascending=True)
+
+    fig_rp = px.bar(
+        region_progress, x="pct_actas", y="region", orientation="h",
+        text="pct_actas", color="pct_actas",
+        color_continuous_scale=["#ff4b4b", "#ffa600", "#00cc96"],
+        range_color=[0, 100],
+        labels={"pct_actas": "% Actas", "region": "Región"},
+    )
+    fig_rp.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
+    fig_rp.update_layout(
+        height=max(400, len(region_progress) * 25),
+        showlegend=False, coloraxis_showscale=False,
+        margin=dict(l=10, r=40, t=10, b=10),
+    )
+    st.plotly_chart(fig_rp, use_container_width=True)
 
     st.divider()
 
