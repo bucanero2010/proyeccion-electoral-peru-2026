@@ -265,7 +265,7 @@ def main():
 
     # ── Projection banner ──
     st.warning(
-        f"⚠️ **PROYECCIÓN** — Basada en {pct_global:.1f}% de actas contabilizadas. "
+        f"⚠️ **PROYECCIÓN** — Basada en {pct_global:.2f}% de actas contabilizadas. "
         f"No es el resultado oficial. Última actualización: {refresh_str}",
         icon="⚠️",
     )
@@ -273,7 +273,7 @@ def main():
     # KPIs — 2x2 grid works better on mobile than 4 columns
     r1c1, r1c2 = st.columns(2)
     r1c1.metric("Distritos", f"{n_distritos:,}")
-    r1c2.metric("Actas contabilizadas", f"{pct_global:.1f}%")
+    r1c2.metric("Actas contabilizadas", f"{pct_global:.2f}%")
     r2c1, r2c2 = st.columns(2)
     r2c1.metric("Votos válidos (proy.)", f"{int(total_validos):,}")
     r2c2.metric("Votos emitidos (proy.)", f"{int(total_emitidos):,}")
@@ -292,7 +292,7 @@ def main():
     fig.update_layout(yaxis={"categoryorder": "total ascending"}, height=max(400, top_n * 45),
                       showlegend=False, coloraxis_showscale=False,
                       margin=dict(l=10, r=10, t=10, b=10))
-    fig.update_traces(texttemplate="%{text:.1f}%", textposition="inside",
+    fig.update_traces(texttemplate="%{text:.2f}%", textposition="inside",
                       insidetextanchor="start")
     st.plotly_chart(fig, use_container_width=True)
 
@@ -302,7 +302,7 @@ def main():
         "Partido": candidatos.index,
         "Votos actuales": [f"{int(actual_candidatos.get(p, 0)):,}" for p in candidatos.index],
         "Votos proyectados": [f"{int(v):,}" for v in candidatos.values],
-        "% Votos válidos": [f"{v:.1f}%" for v in (candidatos / total_validos * 100).round(1).values],
+        "% Votos válidos": [f"{v:.2f}%" for v in (candidatos / total_validos * 100).round(2).values],
     }).reset_index(drop=True)
     summary_df.index += 1
     st.dataframe(summary_df, use_container_width=True, height=min(600, len(summary_df) * 38 + 40))
@@ -321,14 +321,14 @@ def main():
     compare_df = pd.DataFrame({
         "Partido": top_partidos,
         "Votos actuales": [f"{int(actual_candidatos.get(p, 0)):,}" for p in top_partidos],
-        "% Actual": [f"{(actual_candidatos.get(p, 0) / actual_validos * 100):.1f}%" if actual_validos > 0 else "0.0%" for p in top_partidos],
+        "% Actual": [f"{(actual_candidatos.get(p, 0) / actual_validos * 100):.2f}%" if actual_validos > 0 else "0.00%" for p in top_partidos],
         "Votos proyectados": [f"{int(candidatos.get(p, 0)):,}" for p in top_partidos],
-        "% Proyectado": [f"{(candidatos.get(p, 0) / total_validos * 100):.1f}%" if total_validos > 0 else "0.0%" for p in top_partidos],
+        "% Proyectado": [f"{(candidatos.get(p, 0) / total_validos * 100):.2f}%" if total_validos > 0 else "0.00%" for p in top_partidos],
     }).reset_index(drop=True)
     # Compute numeric delta for the chart
     compare_df["Δ %"] = [
-        f"{((candidatos.get(p, 0) / total_validos * 100) - (actual_candidatos.get(p, 0) / actual_validos * 100)):.1f}%"
-        if total_validos > 0 and actual_validos > 0 else "0.0%"
+        f"{((candidatos.get(p, 0) / total_validos * 100) - (actual_candidatos.get(p, 0) / actual_validos * 100)):.2f}%"
+        if total_validos > 0 and actual_validos > 0 else "0.00%"
         for p in top_partidos
     ]
     compare_df.index += 1
@@ -345,13 +345,13 @@ def main():
     fig_cmp.add_trace(go.Bar(
         y=chart_partidos, x=pct_actual_vals,
         name="% Actual", orientation="h", marker_color="#636EFA",
-        text=pct_actual_vals, texttemplate="%{text:.1f}%", textposition="inside",
+        text=pct_actual_vals, texttemplate="%{text:.2f}%", textposition="inside",
         insidetextanchor="start",
     ))
     fig_cmp.add_trace(go.Bar(
         y=chart_partidos, x=pct_proy_vals,
         name="% Proyectado", orientation="h", marker_color="#00CC96",
-        text=pct_proy_vals, texttemplate="%{text:.1f}%", textposition="inside",
+        text=pct_proy_vals, texttemplate="%{text:.2f}%", textposition="inside",
         insidetextanchor="start",
     ))
     fig_cmp.update_layout(
@@ -380,7 +380,7 @@ def main():
     ).reset_index()
     # count is per-partido row, divide by unique distritos
     region_progress["n_distritos"] = proj.groupby(["ambito", "region"])["distrito"].nunique().values
-    region_progress["pct_actas"] = (region_progress["actas_contab"] / region_progress["total_actas"] * 100).fillna(0).round(1)
+    region_progress["pct_actas"] = (region_progress["actas_contab"] / region_progress["total_actas"] * 100).fillna(0).round(2)
     region_progress = region_progress.sort_values("pct_actas", ascending=True)
 
     fig_rp = px.bar(
@@ -390,7 +390,7 @@ def main():
         range_color=[0, 100],
         labels={"pct_actas": "% Actas", "region": "Región"},
     )
-    fig_rp.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
+    fig_rp.update_traces(texttemplate="%{text:.2f}%", textposition="outside")
     fig_rp.update_layout(
         height=max(400, len(region_progress) * 25),
         showlegend=False, coloraxis_showscale=False,
@@ -452,7 +452,7 @@ def main():
                         labels={"pct_actas": "% Actas contabilizadas", "pct_votos": "% Votos válidos",
                                 "partido": "Partido"},
                     )
-                    fig_trend.update_traces(texttemplate="%{y:.1f}%")
+                    fig_trend.update_traces(texttemplate="%{y:.2f}%")
                     fig_trend.update_layout(
                         height=400, yaxis_ticksuffix="%", xaxis_ticksuffix="%",
                         legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5),
