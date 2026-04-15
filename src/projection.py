@@ -115,6 +115,24 @@ def project_distrito(key_d, agg, threshold=THRESHOLD):
     total_counted = sum(actual_votos.values())
     if actas_contab > 0 and total_actas > 0:
         estimated_total = total_counted * (total_actas / actas_contab)
+    elif total_actas > 0 and total_counted == 0:
+        # No votes counted — estimate using avg votes-per-acta from the source level
+        level_key = {"provincia": key_p, "region": key_r, "pais": key_a, "extranjero": key_a, "total": None}
+        src_key = level_key.get(source)
+        src_level = {"provincia": "provincia", "region": "region", "pais": "pais", "extranjero": "pais", "total": "total"}
+        lvl = src_level.get(source, "total")
+        if lvl != "total" and src_key and src_key in agg[lvl]:
+            entry = agg[lvl][src_key]
+            if entry["actas_contab"] > 0:
+                avg_vpa = sum(entry["votos"].values()) / entry["actas_contab"]
+                estimated_total = avg_vpa * total_actas
+            else:
+                estimated_total = 0
+        elif lvl == "total" and agg["total"]["actas_contab"] > 0:
+            avg_vpa = sum(agg["total"]["votos"].values()) / agg["total"]["actas_contab"]
+            estimated_total = avg_vpa * total_actas
+        else:
+            estimated_total = 0
     else:
         estimated_total = total_counted
 
