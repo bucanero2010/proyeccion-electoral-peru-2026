@@ -1,223 +1,223 @@
 {
   "n_sim": 5000,
   "threshold": 30,
-  "source_file": "resultados_presidenciales_20260415_173318.csv",
+  "source_file": "resultados_presidenciales_20260415_175058.csv",
   "stats": {
     "FUERZA POPULAR": {
-      "mean": 2881262,
-      "std": 13045,
-      "p5": 2861833,
-      "p95": 2904635
+      "mean": 2881300,
+      "std": 12838,
+      "p5": 2861839,
+      "p95": 2903678
     },
     "RENOVACIÓN POPULAR": {
-      "mean": 2020488,
-      "std": 13820,
-      "p5": 1999231,
-      "p95": 2044415
+      "mean": 2020656,
+      "std": 14406,
+      "p5": 1998703,
+      "p95": 2045713
     },
     "JUNTOS POR EL PERÚ": {
-      "mean": 2010231,
-      "std": 7822,
-      "p5": 1998585,
-      "p95": 2023737
+      "mean": 2009765,
+      "std": 7730,
+      "p5": 1998137,
+      "p95": 2023081
     },
     "PARTIDO DEL BUEN GOBIERNO": {
-      "mean": 1848773,
-      "std": 10619,
-      "p5": 1833091,
-      "p95": 1867423
+      "mean": 1849135,
+      "std": 10593,
+      "p5": 1833440,
+      "p95": 1868149
     },
     "PARTIDO CÍVICO OBRAS": {
-      "mean": 1697574,
-      "std": 10185,
-      "p5": 1682895,
-      "p95": 1716487
+      "mean": 1697157,
+      "std": 9771,
+      "p5": 1682752,
+      "p95": 1714982
     },
     "PARTIDO PAÍS PARA TODOS": {
-      "mean": 1328805,
-      "std": 10296,
-      "p5": 1313966,
-      "p95": 1347582
+      "mean": 1328587,
+      "std": 9909,
+      "p5": 1313922,
+      "p95": 1346615
     },
     "AHORA NACIÓN - AN": {
-      "mean": 1225805,
-      "std": 8741,
-      "p5": 1213483,
-      "p95": 1241895
+      "mean": 1225633,
+      "std": 8571,
+      "p5": 1213629,
+      "p95": 1241483
     },
     "PRIMERO LA GENTE – COMUNIDAD, ECOLOGÍA, LIBERTAD Y PROGRESO": {
-      "mean": 574488,
-      "std": 6220,
-      "p5": 566202,
-      "p95": 586014
+      "mean": 574700,
+      "std": 6417,
+      "p5": 566493,
+      "p95": 586633
     },
     "PARTIDO SICREO": {
-      "mean": 562832,
-      "std": 4923,
-      "p5": 556079,
-      "p95": 571668
+      "mean": 562814,
+      "std": 4812,
+      "p5": 556182,
+      "p95": 571273
     },
     "PARTIDO FRENTE DE LA ESPERANZA 2021": {
-      "mean": 307966,
-      "std": 3877,
-      "p5": 303206,
-      "p95": 315367
+      "mean": 307914,
+      "std": 4019,
+      "p5": 303282,
+      "p95": 315249
     },
     "PODEMOS PERÚ": {
-      "mean": 266804,
-      "std": 3296,
-      "p5": 262850,
-      "p95": 273059
+      "mean": 266720,
+      "std": 3084,
+      "p5": 262939,
+      "p95": 272698
     },
     "PARTIDO POLÍTICO COOPERACIÓN POPULAR": {
-      "mean": 214716,
-      "std": 2677,
-      "p5": 211825,
-      "p95": 219784
+      "mean": 214761,
+      "std": 2706,
+      "p5": 211847,
+      "p95": 220052
     },
     "ALIANZA PARA EL PROGRESO": {
-      "mean": 192601,
-      "std": 2814,
-      "p5": 189100,
-      "p95": 197504
+      "mean": 192546,
+      "std": 2696,
+      "p5": 189113,
+      "p95": 197498
     },
     "PARTIDO APRISTA PERUANO": {
-      "mean": 161528,
-      "std": 3507,
-      "p5": 157649,
-      "p95": 167790
+      "mean": 161512,
+      "std": 3303,
+      "p5": 157824,
+      "p95": 167457
     },
     "PARTIDO DEMOCRÁTICO SOMOS PERÚ": {
-      "mean": 154103,
-      "std": 3025,
-      "p5": 150377,
-      "p95": 159393
+      "mean": 154027,
+      "std": 3019,
+      "p5": 150373,
+      "p95": 159145
     },
     "PARTIDO PATRIÓTICO DEL PERÚ": {
-      "mean": 144466,
-      "std": 2983,
-      "p5": 141365,
-      "p95": 149839
+      "mean": 144439,
+      "std": 2829,
+      "p5": 141371,
+      "p95": 149512
     },
     "PARTIDO POLÍTICO PERÚ PRIMERO": {
-      "mean": 144334,
-      "std": 2501,
-      "p5": 141502,
-      "p95": 149197
+      "mean": 144283,
+      "std": 2348,
+      "p5": 141617,
+      "p95": 148271
     },
     "ALIANZA ELECTORAL VENCEREMOS": {
-      "mean": 140113,
-      "std": 2779,
-      "p5": 137444,
-      "p95": 145371
+      "mean": 140161,
+      "std": 2787,
+      "p5": 137484,
+      "p95": 145346
     },
     "UN CAMINO DIFERENTE": {
-      "mean": 127028,
-      "std": 2741,
-      "p5": 123995,
-      "p95": 131747
+      "mean": 127085,
+      "std": 2895,
+      "p5": 124009,
+      "p95": 131758
     },
     "PARTIDO DEMÓCRATA UNIDO PERÚ": {
-      "mean": 119020,
-      "std": 2910,
-      "p5": 116238,
-      "p95": 124649
+      "mean": 119015,
+      "std": 2869,
+      "p5": 116264,
+      "p95": 124344
     },
     "PARTIDO POLÍTICO NACIONAL PERÚ LIBRE": {
-      "mean": 100182,
-      "std": 2422,
-      "p5": 97871,
-      "p95": 104728
+      "mean": 100194,
+      "std": 2392,
+      "p5": 97883,
+      "p95": 104653
     },
     "PARTIDO MORADO": {
-      "mean": 82189,
-      "std": 2330,
-      "p5": 79768,
-      "p95": 86373
+      "mean": 82197,
+      "std": 2368,
+      "p5": 79765,
+      "p95": 86391
     },
     "UNIDAD NACIONAL": {
-      "mean": 68156,
-      "std": 2484,
-      "p5": 65684,
-      "p95": 72601
+      "mean": 68206,
+      "std": 2507,
+      "p5": 65744,
+      "p95": 72691
     },
     "PROGRESEMOS": {
-      "mean": 65979,
-      "std": 1874,
-      "p5": 64176,
-      "p95": 69184
+      "mean": 65963,
+      "std": 1885,
+      "p5": 64157,
+      "p95": 69198
     },
     "PARTIDO POLÍTICO INTEGRIDAD DEMOCRÁTICA": {
-      "mean": 63863,
-      "std": 2188,
-      "p5": 61780,
-      "p95": 67512
+      "mean": 63856,
+      "std": 1996,
+      "p5": 61835,
+      "p95": 67354
     },
     "PARTIDO DEMÓCRATA VERDE": {
-      "mean": 63847,
-      "std": 2177,
-      "p5": 61884,
-      "p95": 67640
+      "mean": 63821,
+      "std": 2249,
+      "p5": 61866,
+      "p95": 67524
     },
     "LIBERTAD POPULAR": {
-      "mean": 41114,
-      "std": 1972,
-      "p5": 39403,
-      "p95": 44603
+      "mean": 41103,
+      "std": 1868,
+      "p5": 39423,
+      "p95": 44374
     },
     "AVANZA PAÍS - PARTIDO DE INTEGRACIÓN SOCIAL": {
-      "mean": 32832,
-      "std": 1527,
-      "p5": 31568,
-      "p95": 35156
+      "mean": 32851,
+      "std": 1658,
+      "p5": 31555,
+      "p95": 35239
     },
     "PARTIDO POLÍTICO PERÚ ACCIÓN": {
-      "mean": 31560,
-      "std": 1623,
-      "p5": 30250,
-      "p95": 34219
+      "mean": 31591,
+      "std": 1663,
+      "p5": 30271,
+      "p95": 34213
     },
     "FUERZA Y LIBERTAD": {
-      "mean": 27377,
-      "std": 1567,
-      "p5": 26173,
-      "p95": 29773
+      "mean": 27367,
+      "std": 1447,
+      "p5": 26190,
+      "p95": 29730
     },
     "FE EN EL PERÚ": {
-      "mean": 23345,
-      "std": 1264,
-      "p5": 22382,
-      "p95": 25245
+      "mean": 23341,
+      "std": 1352,
+      "p5": 22389,
+      "p95": 25207
     },
     "PARTIDO DEMOCRATICO FEDERAL": {
-      "mean": 21771,
-      "std": 1431,
-      "p5": 20789,
-      "p95": 24135
+      "mean": 21824,
+      "std": 1486,
+      "p5": 20805,
+      "p95": 24271
     },
     "SALVEMOS AL PERÚ": {
-      "mean": 17603,
-      "std": 1203,
-      "p5": 16828,
-      "p95": 19228
+      "mean": 17607,
+      "std": 1261,
+      "p5": 16834,
+      "p95": 19084
     },
     "PARTIDO POLÍTICO PRIN": {
-      "mean": 14568,
-      "std": 1265,
-      "p5": 13768,
-      "p95": 16335
+      "mean": 14572,
+      "std": 1311,
+      "p5": 13767,
+      "p95": 16370
     },
     "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE - PERÚ": {
-      "mean": 11519,
-      "std": 1186,
-      "p5": 10796,
-      "p95": 13111
+      "mean": 11532,
+      "std": 1225,
+      "p5": 10802,
+      "p95": 13011
     },
     "PERÚ MODERNO": {
-      "mean": 9856,
-      "std": 1020,
-      "p5": 9203,
-      "p95": 11322
+      "mean": 9861,
+      "std": 1117,
+      "p5": 9191,
+      "p95": 11314
     }
   },
   "positions": {
@@ -225,12 +225,12 @@
       "FUERZA POPULAR": 100.0
     },
     "2": {
-      "JUNTOS POR EL PERÚ": 27.44,
-      "RENOVACIÓN POPULAR": 72.56
+      "JUNTOS POR EL PERÚ": 25.7,
+      "RENOVACIÓN POPULAR": 74.3
     },
     "3": {
-      "RENOVACIÓN POPULAR": 27.44,
-      "JUNTOS POR EL PERÚ": 72.56
+      "RENOVACIÓN POPULAR": 25.7,
+      "JUNTOS POR EL PERÚ": 74.3
     }
   }
 }
