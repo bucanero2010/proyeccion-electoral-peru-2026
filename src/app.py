@@ -205,6 +205,87 @@ def load_similarity_index():
     return sim_index
 
 
+def run_monte_carlo(df, proj, all_partidos, n_sim=3000):
+    """Run Monte Carlo simulation using the projection's proportions as Dirichlet means."""
+    import numpy as np
+    from collections import defaultdict
+
+    np.random.seed(42)
+    SPECIAL_SET = {"VOTOS EN BLANCO", "VOTOS NULOS"}
+    meta = {"ambito", "region", "provincia", "distrito", "total_actas",
+            "actas_contabilizadas", "pct_actas", "fuente"}
+    partido_cols = [c for c in all_partidos if c not in meta]
+    non_special = [p for p in partido_cols if p not in SPECIAL_SET]
+    n_partidos = len(partido_cols)
+
+    # Projected votes per distrito
+    projected = proj[partido_cols].fillna(0).values.astype(float)
+
+    # Counted votes per distrito
+    votos_pivot = df.pivot_table(
+        index=["ambito", "region", "provincia", "distrito"],
+        columns="partido", values="votos", aggfunc="sum", fill_value=0
+    ).reindex(columns=partido_cols, fill_value=0)
+    proj_keys = list(zip(proj["ambito"], proj["region"], proj["provincia"], proj["distrito"]))
+    votos_pivot = votos_pivot.reindex(pd.MultiIndex.from_tuples(proj_keys), fill_value=0)
+    counted = votos_pivot.values.astype(float)
+
+    # Remaining votes per distrito
+    remaining = np.clip(projected.sum(axis=1) - counted.sum(axis=1), 0, None)
+
+    # Proportions from projection
+    proj_totals = projected.sum(axis=1, keepdims=True)
+    proj_props = np.where(proj_totals > 0, projected / proj_totals, 0)
+
+    pct_actas = proj["pct_actas"].values.astype(float)
+    n_effective = np.clip(pct_actas / 100 * 50, 1, 100)
+
+    sim_mask = np.where(remaining > 10)[0]
+    fixed_totals = counted.sum(axis=0)
+
+    s_props = proj_props[sim_mask]
+    s_remaining = remaining[sim_mask]
+    s_n_eff = n_effective[sim_mask]
+
+    sim_results = np.zeros((n_sim, n_partidos))
+    for s in range(n_sim):
+        extra = np.zeros(n_partidos)
+        for i in range(len(sim_mask)):
+            alpha = s_props[i] * s_n_eff[i] + 0.001
+            noisy = np.random.dirichlet(alpha)
+            extra += noisy * s_remaining[i]
+        sim_results[s] = fixed_totals + extra
+
+    # Compute stats
+    non_special_idx = [partido_cols.index(p) for p in non_special]
+    stats = {}
+    for r in range(len(non_special)):
+        idx = non_special_idx[r]
+        p = non_special[r]
+        vals = sim_results[:, idx]
+        stats[p] = {
+            "mean": vals.mean(), "std": vals.std(),
+            "p5": np.percentile(vals, 5), "p95": np.percentile(vals, 95),
+        }
+
+    # Position probabilities
+    positions = {1: defaultdict(float), 2: defaultdict(float), 3: defaultdict(float)}
+    for s in range(n_sim):
+        vals = [(non_special[i], sim_results[s, non_special_idx[i]]) for i in range(len(non_special))]
+        vals.sort(key=lambda x: -x[1])
+        for pos in [1, 2, 3]:
+            positions[pos][vals[pos - 1][0]] += 1
+
+    for pos in positions:
+        for p in positions[pos]:
+            positions[pos][p] = positions[pos][p] / n_sim * 100
+
+    # Sort stats by mean descending
+    stats = dict(sorted(stats.items(), key=lambda x: -x[1]["mean"]))
+
+    return {"stats": stats, "positions": dict(positions), "n_sim": n_sim}
+
+
 def main():
     st.title("🗳️ Proyección Electoral Presidencial Perú 2026")
 
@@ -361,6 +442,46 @@ def main():
         margin=dict(l=10, r=10, t=30, b=10),
     )
     st.plotly_chart(fig_cmp, use_container_width=True)
+
+    st.divider()
+
+    # ── Monte Carlo simulation ──
+    st.subheader("🎲 Probabilidad por posición (Monte Carlo)")
+    mc_results = run_monte_carlo(df, proj, all_partidos=partido_cols, n_sim=3000)
+    if mc_results is not None:
+        non_special_names = [p for p in partido_cols if p not in SPECIAL]
+
+        # Position probabilities table
+        pos_labels = {1: "1er lugar", 2: "2do lugar", 3: "3er lugar"}
+        mc_table_rows = []
+        for pos in [1, 2, 3]:
+            for p, prob in mc_results["positions"][pos].items():
+                if prob >= 0.1:
+                    mc_table_rows.append({"Posición": pos_labels[pos], "Partido": p, "Probabilidad": f"{prob:.2f}%"})
+
+        if mc_table_rows:
+            mc_df = pd.DataFrame(mc_table_rows)
+            st.dataframe(mc_df, use_container_width=True, hide_index=True,
+                         height=min(400, len(mc_table_rows) * 38 + 40))
+
+        # Confidence intervals for top candidates
+        st.caption("Intervalos de confianza (P5 — P95) para los principales candidatos:")
+        ci_rows = []
+        for p in non_special_names:
+            if p in mc_results["stats"]:
+                s = mc_results["stats"][p]
+                ci_rows.append({
+                    "Partido": p,
+                    "Proyección": f"{int(s['mean']):,}",
+                    "P5": f"{int(s['p5']):,}",
+                    "P95": f"{int(s['p95']):,}",
+                    "± Std": f"{int(s['std']):,}",
+                })
+        if ci_rows:
+            ci_df = pd.DataFrame(ci_rows[:10])
+            st.dataframe(ci_df, use_container_width=True, hide_index=True)
+
+        st.caption(f"Basado en {mc_results['n_sim']:,} simulaciones Monte Carlo usando distribución Dirichlet.")
 
     st.divider()
 
