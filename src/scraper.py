@@ -24,16 +24,23 @@ _local = threading.local()
 request_count = 0
 _lock = threading.Lock()
 
+REQUEST_HEADERS = {
+    "Accept": "*/*",
+    "Content-Type": "application/json",
+    "Referer": "https://resultadoelectoral.onpe.gob.pe/main/presidenciales",
+    "Origin": "https://resultadoelectoral.onpe.gob.pe",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+}
+
 
 def get_session():
     """Thread-local session for connection pooling."""
     if not hasattr(_local, "session"):
         s = requests.Session()
-        s.headers.update({
-            "Accept": "application/json",
-            "Referer": "https://resultadoelectoral.onpe.gob.pe/main/presidenciales",
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        })
+        s.headers.update(REQUEST_HEADERS)
         retry = Retry(total=3, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
         s.mount("https://", HTTPAdapter(max_retries=retry, pool_connections=5, pool_maxsize=5))
         _local.session = s
