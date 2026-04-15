@@ -292,7 +292,7 @@ def main():
     fig.update_layout(yaxis={"categoryorder": "total ascending"}, height=max(400, top_n * 45),
                       showlegend=False, coloraxis_showscale=False,
                       margin=dict(l=10, r=10, t=10, b=10))
-    fig.update_traces(texttemplate="%{text:.2f}%", textposition="inside",
+    fig.update_traces(texttemplate="%{text:.1f}%", textposition="inside",
                       insidetextanchor="start")
     st.plotly_chart(fig, use_container_width=True)
 
@@ -300,9 +300,9 @@ def main():
     st.subheader("Tabla resumen")
     summary_df = pd.DataFrame({
         "Partido": candidatos.index,
-        "Votos actuales": [int(actual_candidatos.get(p, 0)) for p in candidatos.index],
-        "Votos proyectados": candidatos.values.astype(int),
-        "% Votos válidos": (candidatos / total_validos * 100).round(3).values,
+        "Votos actuales": [f"{int(actual_candidatos.get(p, 0)):,}" for p in candidatos.index],
+        "Votos proyectados": [f"{int(v):,}" for v in candidatos.values],
+        "% Votos válidos": [f"{v:.1f}%" for v in (candidatos / total_validos * 100).round(1).values],
     }).reset_index(drop=True)
     summary_df.index += 1
     st.dataframe(summary_df, use_container_width=True, height=min(600, len(summary_df) * 38 + 40))
@@ -320,30 +320,38 @@ def main():
     top_partidos = candidatos.head(top_n).index
     compare_df = pd.DataFrame({
         "Partido": top_partidos,
-        "Votos actuales": [int(actual_candidatos.get(p, 0)) for p in top_partidos],
-        "% Actual": [(actual_candidatos.get(p, 0) / actual_validos * 100).round(2) if actual_validos > 0 else 0 for p in top_partidos],
-        "Votos proyectados": [int(candidatos.get(p, 0)) for p in top_partidos],
-        "% Proyectado": [(candidatos.get(p, 0) / total_validos * 100).round(2) if total_validos > 0 else 0 for p in top_partidos],
+        "Votos actuales": [f"{int(actual_candidatos.get(p, 0)):,}" for p in top_partidos],
+        "% Actual": [f"{(actual_candidatos.get(p, 0) / actual_validos * 100):.1f}%" if actual_validos > 0 else "0.0%" for p in top_partidos],
+        "Votos proyectados": [f"{int(candidatos.get(p, 0)):,}" for p in top_partidos],
+        "% Proyectado": [f"{(candidatos.get(p, 0) / total_validos * 100):.1f}%" if total_validos > 0 else "0.0%" for p in top_partidos],
     }).reset_index(drop=True)
-    compare_df["Diferencia votos"] = compare_df["Votos proyectados"] - compare_df["Votos actuales"]
-    compare_df["Δ %"] = (compare_df["% Proyectado"] - compare_df["% Actual"]).round(3)
+    # Compute numeric delta for the chart
+    compare_df["Δ %"] = [
+        f"{((candidatos.get(p, 0) / total_validos * 100) - (actual_candidatos.get(p, 0) / actual_validos * 100)):.1f}%"
+        if total_validos > 0 and actual_validos > 0 else "0.0%"
+        for p in top_partidos
+    ]
     compare_df.index += 1
 
     st.dataframe(compare_df, use_container_width=True, height=min(500, len(compare_df) * 38 + 40))
 
     # Grouped bar chart: actual vs projected %
     import plotly.graph_objects as go
+    pct_actual_vals = [(actual_candidatos.get(p, 0) / actual_validos * 100) if actual_validos > 0 else 0 for p in top_partidos]
+    pct_proy_vals = [(candidatos.get(p, 0) / total_validos * 100) if total_validos > 0 else 0 for p in top_partidos]
+    chart_partidos = list(top_partidos)
+
     fig_cmp = go.Figure()
     fig_cmp.add_trace(go.Bar(
-        y=compare_df["Partido"], x=compare_df["% Actual"],
+        y=chart_partidos, x=pct_actual_vals,
         name="% Actual", orientation="h", marker_color="#636EFA",
-        text=compare_df["% Actual"], texttemplate="%{text:.2f}%", textposition="inside",
+        text=pct_actual_vals, texttemplate="%{text:.1f}%", textposition="inside",
         insidetextanchor="start",
     ))
     fig_cmp.add_trace(go.Bar(
-        y=compare_df["Partido"], x=compare_df["% Proyectado"],
+        y=chart_partidos, x=pct_proy_vals,
         name="% Proyectado", orientation="h", marker_color="#00CC96",
-        text=compare_df["% Proyectado"], texttemplate="%{text:.2f}%", textposition="inside",
+        text=pct_proy_vals, texttemplate="%{text:.1f}%", textposition="inside",
         insidetextanchor="start",
     ))
     fig_cmp.update_layout(
@@ -444,8 +452,9 @@ def main():
                         labels={"pct_actas": "% Actas contabilizadas", "pct_votos": "% Votos válidos",
                                 "partido": "Partido"},
                     )
+                    fig_trend.update_traces(texttemplate="%{y:.1f}%")
                     fig_trend.update_layout(
-                        height=400,
+                        height=400, yaxis_ticksuffix="%", xaxis_ticksuffix="%",
                         legend=dict(orientation="h", yanchor="bottom", y=-0.4, xanchor="center", x=0.5),
                         margin=dict(l=10, r=10, t=10, b=10),
                     )
@@ -456,7 +465,7 @@ def main():
                     snaps, x="timestamp", y="pct_actas_global", markers=True,
                     labels={"timestamp": "Fecha/hora", "pct_actas_global": "% Actas contabilizadas"},
                 )
-                fig_actas.update_layout(height=250, margin=dict(l=10, r=10, t=10, b=10))
+                fig_actas.update_layout(height=250, yaxis_ticksuffix="%", margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_actas, use_container_width=True)
 
                 st.caption(f"{len(snaps)} snapshots registrados. Ejecuta el scraper periódicamente para más datos.")
