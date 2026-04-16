@@ -83,39 +83,56 @@ FILE_2021_EXT = os.path.join(DATA_DIR, "2021_extranjero_resultados.csv")
 
 def build_extranjero_similarity_index(k=20):
     """
-    Build similarity index for Extranjero districts using 2021 overseas voting data.
+    Build unified similarity index combining Peru + Extranjero 2021 data.
+    Overseas districts can find similar districts from anywhere (Peru or abroad).
     Returns:
         sim_index: dict {ubigeo: [(neighbor_ubigeo, similarity_score), ...]}
+                   Only contains entries for Extranjero ubigeos, but neighbors
+                   can be from Peru or Extranjero.
     """
-    if not os.path.exists(FILE_2021_EXT):
+    if not os.path.exists(FILE_2021_EXT) or not os.path.exists(FILE_2021):
         return {}
 
+    # Load Peru vectors
+    peru_ubigeos, peru_partidos, peru_vectors = load_2021_vectors()
+
+    # Load Extranjero vectors using the same partido order
     with open(FILE_2021_EXT, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
+        ext_rows = list(csv.DictReader(f))
 
-    if not rows:
+    if not ext_rows:
         return {}
 
-    # Get partido columns (everything after ubigeo/dept/prov/dist)
-    partidos = [c for c in rows[0].keys() if c not in ("ubigeo", "departamento", "provincia", "distrito")]
-    ubigeos = [r["ubigeo"] for r in rows]
+    ext_partidos = [c for c in ext_rows[0].keys() if c not in ("ubigeo", "departamento", "provincia", "distrito")]
+    ext_ubigeos = [r["ubigeo"] for r in ext_rows]
 
-    vectors = np.zeros((len(ubigeos), len(partidos)))
-    for i, r in enumerate(rows):
-        for j, p in enumerate(partidos):
-            vectors[i, j] = float(r[p] or 0)
-        total = vectors[i].sum()
+    # Build ext vectors aligned to peru_partidos order
+    partido_idx = {p: i for i, p in enumerate(peru_partidos)}
+    ext_vectors = np.zeros((len(ext_ubigeos), len(peru_partidos)))
+    for i, r in enumerate(ext_rows):
+        for p in ext_partidos:
+            if p in partido_idx:
+                ext_vectors[i, partido_idx[p]] = float(r[p] or 0)
+        total = ext_vectors[i].sum()
         if total > 0:
-            vectors[i] /= total
+            ext_vectors[i] /= total
 
-    sim_matrix = cosine_similarity_matrix(vectors)
+    # Combine: all vectors together
+    all_ubigeos = peru_ubigeos + ext_ubigeos
+    all_vectors = np.vstack([peru_vectors, ext_vectors])
 
+    sim_matrix = cosine_similarity_matrix(all_vectors)
+
+    # Only build index for Extranjero ubigeos, but neighbors can be anyone
+    ext_start = len(peru_ubigeos)
     sim_index = {}
-    for i, ub in enumerate(ubigeos):
-        scores = sim_matrix[i]
-        top_indices = np.argsort(scores)[::-1][1:k+1]
-        sim_index[ub] = [(ubigeos[j], float(scores[j])) for j in top_indices]
+    for i, ub in enumerate(ext_ubigeos):
+        global_i = ext_start + i
+        scores = sim_matrix[global_i]
+        # Exclude self
+        scores[global_i] = -1
+        top_indices = np.argsort(scores)[::-1][:k]
+        sim_index[ub] = [(all_ubigeos[j], float(scores[j])) for j in top_indices]
 
     return sim_index
 
