@@ -1,7 +1,7 @@
 {
   "n_sim": 5000,
   "threshold": 30,
-  "source_file": "resultados_presidenciales_20260416_115739.csv",
+  "source_file": "resultados_presidenciales_20260416_121601.csv",
   "stats": {
     "FUERZA POPULAR": {
       "mean": 2881525,
