@@ -9,6 +9,7 @@ import os
 import requests
 import csv
 import time
+import json
 from datetime import datetime
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -17,8 +18,9 @@ import threading
 
 BASE = "https://resultadoelectoral.onpe.gob.pe/presentacion-backend"
 ID_ELECCION = 10
-WORKERS = 3  # concurrent requests — more than this triggers ONPE throttling
+WORKERS = 5
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+UBIGEO_CACHE = os.path.join(DATA_DIR, "ubigeo_cache.json")
 
 _local = threading.local()
 request_count = 0
@@ -37,7 +39,6 @@ REQUEST_HEADERS = {
 
 
 def get_session():
-    """Thread-local session for connection pooling."""
     if not hasattr(_local, "session"):
         s = requests.Session()
         s.headers.update(REQUEST_HEADERS)
@@ -62,26 +63,59 @@ def api_get(path, params=None):
             elif r.status_code == 204:
                 return []
         except Exception as e:
-            wait = 2 * (attempt + 1)
-            time.sleep(wait)
+            time.sleep(2 * (attempt + 1))
             if attempt == 2:
                 return []
     return []
 
 
-def fetch_distrito(id_ambito, ambito_name, nom_d, ub_d, nom_p, ub_p, dist):
-    """Fetch totales + participantes for a single distrito. Returns list of row dicts."""
+def load_ubigeo_hierarchy():
+    """Load or fetch the ubigeo hierarchy (deptos → provs → dists). Cached to disk."""
+    if os.path.exists(UBIGEO_CACHE):
+        with open(UBIGEO_CACHE) as f:
+            cache = json.load(f)
+        print(f"  Ubigeo cache loaded ({sum(len(d['dists']) for a in cache for d in a['deptos'] for d in d.get('provs', []))} districts)")
+        return cache
+
+    print("  Fetching ubigeo hierarchy (first run only)...")
+    hierarchy = []
+    for id_ambito, ambito_name in [(1, "PERÚ"), (2, "EXTRANJERO")]:
+        deptos = api_get("/ubigeos/departamentos", {"idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito})
+        ambito_data = {"id": id_ambito, "name": ambito_name, "deptos": []}
+        for dep in deptos:
+            provs = api_get("/ubigeos/provincias", {"idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito, "idUbigeoDepartamento": dep["ubigeo"]})
+            dep_data = {"ubigeo": dep["ubigeo"], "nombre": dep["nombre"], "provs": []}
+            for prov in provs:
+                dists = api_get("/ubigeos/distritos", {"idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito, "idUbigeoDepartamento": dep["ubigeo"], "idUbigeoProvincia": prov["ubigeo"]})
+                dep_data["provs"].append({"ubigeo": prov["ubigeo"], "nombre": prov["nombre"], "dists": dists})
+            ambito_data["deptos"].append(dep_data)
+        hierarchy.append(ambito_data)
+
+    with open(UBIGEO_CACHE, "w") as f:
+        json.dump(hierarchy, f)
+    total_dists = sum(len(p["dists"]) for a in hierarchy for d in a["deptos"] for p in d["provs"])
+    print(f"  Ubigeo hierarchy cached ({total_dists} districts)")
+    return hierarchy
+
+
+def fetch_distrito(id_ambito, ambito_name, nom_d, ub_d, nom_p, ub_p, dist, skip_totales=False, cached_totales=None):
+    """Fetch participantes (and optionally totales) for a single distrito."""
     ub_dt = dist["ubigeo"]
     nom_dt = dist["nombre"]
 
-    totales = api_get("/resumen-general/totales", {
-        "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito,
-        "tipoFiltro": "ubigeo_nivel_03",
-        "idUbigeoDepartamento": ub_d, "idUbigeoProvincia": ub_p,
-        "idUbigeoDistrito": ub_dt})
-    t_actas = totales.get("totalActas", "") if isinstance(totales, dict) else ""
-    t_contab = totales.get("contabilizadas", "") if isinstance(totales, dict) else ""
-    t_pct = totales.get("actasContabilizadas", "") if isinstance(totales, dict) else ""
+    if skip_totales and cached_totales:
+        t_actas = cached_totales.get("total_actas", "")
+        t_contab = cached_totales.get("actas_contabilizadas", "")
+        t_pct = cached_totales.get("pct_actas_contabilizadas", "")
+    else:
+        totales = api_get("/resumen-general/totales", {
+            "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito,
+            "tipoFiltro": "ubigeo_nivel_03",
+            "idUbigeoDepartamento": ub_d, "idUbigeoProvincia": ub_p,
+            "idUbigeoDistrito": ub_dt})
+        t_actas = totales.get("totalActas", "") if isinstance(totales, dict) else ""
+        t_contab = totales.get("contabilizadas", "") if isinstance(totales, dict) else ""
+        t_pct = totales.get("actasContabilizadas", "") if isinstance(totales, dict) else ""
 
     data = api_get("/eleccion-presidencial/participantes-ubicacion-geografica-nombre", {
         "tipoFiltro": "ubigeo_nivel_03", "idAmbitoGeografico": id_ambito,
@@ -125,7 +159,8 @@ def main():
     # Load previous data — keep 100% districts, re-fetch the rest
     import glob
     prev_files = sorted(glob.glob(os.path.join(DATA_DIR, "resultados_presidenciales_*.csv")))
-    completed_districts = {}  # {ubigeo_distrito: [rows]}
+    completed_districts = {}  # {ubigeo: [rows]}
+    prev_totales = {}  # {ubigeo: {total_actas, actas_contabilizadas, pct}}
     if prev_files:
         import pandas as pd
         prev = pd.read_csv(prev_files[-1], dtype=str)
@@ -133,7 +168,18 @@ def main():
         complete = prev[prev["pct_actas_contabilizadas"] >= 100.0]
         for ub, grp in complete.groupby("ubigeo_distrito"):
             completed_districts[ub] = grp.to_dict("records")
+        # Cache totales for districts at 100% (skip totales API call for them if re-fetched)
+        for ub, grp in prev.groupby("ubigeo_distrito"):
+            row = grp.iloc[0]
+            prev_totales[ub] = {
+                "total_actas": row.get("total_actas", ""),
+                "actas_contabilizadas": row.get("actas_contabilizadas", ""),
+                "pct_actas_contabilizadas": row.get("pct_actas_contabilizadas", ""),
+            }
         print(f"Loaded {len(completed_districts)} completed districts from previous run")
+
+    # Load ubigeo hierarchy (cached after first run)
+    hierarchy = load_ubigeo_hierarchy()
 
     total_rows = 0
     total_distritos = 0
@@ -151,34 +197,33 @@ def main():
             total_rows += len(rows)
             skipped += 1
 
-        for id_ambito, ambito_name in [(1, "PERÚ"), (2, "EXTRANJERO")]:
-            deptos = api_get("/ubigeos/departamentos", {
-                "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito})
+        for ambito in hierarchy:
+            id_ambito = ambito["id"]
+            ambito_name = ambito["name"]
 
-            for depto in deptos:
-                ub_d = depto["ubigeo"]
-                nom_d = depto["nombre"]
-                provs = api_get("/ubigeos/provincias", {
-                    "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito,
-                    "idUbigeoDepartamento": ub_d})
+            for dep in ambito["deptos"]:
+                ub_d = dep["ubigeo"]
+                nom_d = dep["nombre"]
 
-                for prov in provs:
+                for prov in dep["provs"]:
                     ub_p = prov["ubigeo"]
                     nom_p = prov["nombre"]
-                    dists = api_get("/ubigeos/distritos", {
-                        "idEleccion": ID_ELECCION, "idAmbitoGeografico": id_ambito,
-                        "idUbigeoDepartamento": ub_d, "idUbigeoProvincia": ub_p})
+                    dists = prov["dists"]
 
-                    # Filter out already-completed districts
                     to_fetch = [d for d in dists if d["ubigeo"] not in completed_districts]
 
                     if to_fetch:
                         with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-                            futures = {
-                                pool.submit(fetch_distrito, id_ambito, ambito_name,
-                                            nom_d, ub_d, nom_p, ub_p, d): d
-                                for d in to_fetch
-                            }
+                            futures = {}
+                            for d in to_fetch:
+                                # Skip totales call if district was at 100% before
+                                # (it won't change) — optimization #3
+                                ub = d["ubigeo"]
+                                skip_t = ub in prev_totales and float(prev_totales[ub].get("pct_actas_contabilizadas", 0)) >= 100
+                                cached_t = prev_totales.get(ub) if skip_t else None
+                                futures[pool.submit(fetch_distrito, id_ambito, ambito_name,
+                                                    nom_d, ub_d, nom_p, ub_p, d,
+                                                    skip_totales=skip_t, cached_totales=cached_t)] = d
                             for future in as_completed(futures):
                                 rows = future.result()
                                 for row in rows:
@@ -187,13 +232,14 @@ def main():
                                 total_distritos += 1
 
                     f.flush()
-                    time.sleep(0.5)
+                    # No sleep — optimization #4
                     elapsed = time.time() - t0
                     rate = total_distritos / elapsed if elapsed > 0 else 0
                     n_skipped = len(dists) - len(to_fetch)
-                    print(f"  {ambito_name} > {nom_d} > {nom_p}: "
-                          f"{len(to_fetch)} fetched, {n_skipped} cached "
-                          f"[{total_distritos + skipped} total, {rate:.1f} new/s]")
+                    if to_fetch:
+                        print(f"  {ambito_name} > {nom_d} > {nom_p}: "
+                              f"{len(to_fetch)} fetched, {n_skipped} cached "
+                              f"[{total_distritos + skipped} total, {rate:.1f} new/s]")
 
             print(f"\n{ambito_name} completado.\n")
 
@@ -205,7 +251,7 @@ def main():
     print(f"API requests: {request_count}")
     print(f"{'='*60}")
 
-    # Save snapshot for time-series tracking
+    # Save snapshot
     try:
         import pandas as pd
         import sys
