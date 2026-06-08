@@ -1,70 +1,79 @@
 {
-  "timestamp": "2026-06-08T12:25:52.425963",
-  "pct_actas": 91.8,
+  "timestamp": "2026-06-08T12:33:05.526778",
+  "pct_actas": 91.87,
   "fp": {
-    "votos_actuales": 8353343,
-    "votos_proyectados": 8909930,
-    "pct_actual": 49.84,
-    "pct_proyectado": 49.63,
-    "win_probability": 0.5
+    "votos_actuales": 8664408,
+    "votos_proyectados": 9252421,
+    "pct_actual": 50.29,
+    "pct_proyectado": 50.1,
+    "win_probability": 74.03
   },
   "jp": {
-    "votos_actuales": 8405685,
-    "votos_proyectados": 9043639,
-    "pct_actual": 50.16,
-    "pct_proyectado": 50.37,
-    "win_probability": 99.5
+    "votos_actuales": 8565008,
+    "votos_proyectados": 9214159,
+    "pct_actual": 49.71,
+    "pct_proyectado": 49.9,
+    "win_probability": 25.97
   },
   "margin": {
-    "mean": -0.38,
-    "p5": -0.645,
-    "p95": -0.124
+    "mean": 0.102,
+    "p5": -0.172,
+    "p95": 0.364
   },
   "regions": [
     {
       "ambito": "PERÚ",
       "region": "LIMA",
-      "fp_votos": 4072903,
-      "jp_votos": 2340033,
+      "fp_votos": 4072898,
+      "jp_votos": 2340038,
       "fp_pct": 63.51,
       "jp_pct": 36.49,
-      "pct_actas": 97.9
-    },
-    {
-      "ambito": "PERÚ",
-      "region": "PIURA",
-      "fp_votos": 589693,
-      "jp_votos": 448445,
-      "fp_pct": 56.8,
-      "jp_pct": 43.2,
-      "pct_actas": 94.0
+      "pct_actas": 98.4
     },
     {
       "ambito": "PERÚ",
       "region": "LA LIBERTAD",
-      "fp_votos": 558823,
-      "jp_votos": 416058,
-      "fp_pct": 57.32,
-      "jp_pct": 42.68,
-      "pct_actas": 97.8
+      "fp_votos": 606112,
+      "jp_votos": 448067,
+      "fp_pct": 57.5,
+      "jp_pct": 42.5,
+      "pct_actas": 93.2
+    },
+    {
+      "ambito": "PERÚ",
+      "region": "PIURA",
+      "fp_votos": 589871,
+      "jp_votos": 447940,
+      "fp_pct": 56.84,
+      "jp_pct": 43.16,
+      "pct_actas": 94.4
     },
     {
       "ambito": "PERÚ",
       "region": "AREQUIPA",
-      "fp_votos": 335219,
-      "jp_votos": 585139,
+      "fp_votos": 335028,
+      "jp_votos": 584778,
       "fp_pct": 36.42,
       "jp_pct": 63.58,
-      "pct_actas": 91.4
+      "pct_actas": 92.6
     },
     {
       "ambito": "PERÚ",
       "region": "CUSCO",
-      "fp_votos": 167847,
-      "jp_votos": 609180,
+      "fp_votos": 167838,
+      "jp_votos": 609014,
       "fp_pct": 21.6,
       "jp_pct": 78.4,
       "pct_actas": 88.5
+    },
+    {
+      "ambito": "PERÚ",
+      "region": "CAJAMARCA",
+      "fp_votos": 247246,
+      "jp_votos": 497106,
+      "fp_pct": 33.22,
+      "jp_pct": 66.78,
+      "pct_actas": 95.8
     },
     {
       "ambito": "PERÚ",
@@ -77,93 +86,102 @@
     },
     {
       "ambito": "PERÚ",
-      "region": "CAJAMARCA",
-      "fp_votos": 246859,
-      "jp_votos": 496103,
-      "fp_pct": 33.23,
-      "jp_pct": 66.77,
-      "pct_actas": 95.0
-    },
-    {
-      "ambito": "PERÚ",
       "region": "JUNÍN",
-      "fp_votos": 321608,
-      "jp_votos": 394656,
-      "fp_pct": 44.9,
-      "jp_pct": 55.1,
-      "pct_actas": 96.0
+      "fp_votos": 321049,
+      "jp_votos": 394801,
+      "fp_pct": 44.85,
+      "jp_pct": 55.15,
+      "pct_actas": 93.6
     },
     {
       "ambito": "PERÚ",
       "region": "PUNO",
-      "fp_votos": 95922,
-      "jp_votos": 613919,
-      "fp_pct": 13.51,
-      "jp_pct": 86.49,
-      "pct_actas": 94.6
+      "fp_votos": 93874,
+      "jp_votos": 596202,
+      "fp_pct": 13.6,
+      "jp_pct": 86.4,
+      "pct_actas": 97.6
     },
     {
       "ambito": "PERÚ",
       "region": "ÁNCASH",
-      "fp_votos": 270891,
-      "jp_votos": 353110,
-      "fp_pct": 43.41,
-      "jp_pct": 56.59,
-      "pct_actas": 96.0
+      "fp_votos": 270722,
+      "jp_votos": 353006,
+      "fp_pct": 43.4,
+      "jp_pct": 56.6,
+      "pct_actas": 96.5
     },
     {
       "ambito": "PERÚ",
-      "region": "ICA",
-      "fp_votos": 282441,
-      "jp_votos": 261277,
-      "fp_pct": 51.95,
-      "jp_pct": 48.05,
-      "pct_actas": 97.1
+      "region": "CALLAO",
+      "fp_votos": 403942,
+      "jp_votos": 211879,
+      "fp_pct": 65.59,
+      "jp_pct": 34.41,
+      "pct_actas": 97.2
     },
     {
       "ambito": "PERÚ",
       "region": "LORETO",
-      "fp_votos": 263142,
-      "jp_votos": 224444,
-      "fp_pct": 53.97,
-      "jp_pct": 46.03,
+      "fp_votos": 262863,
+      "jp_votos": 224723,
+      "fp_pct": 53.91,
+      "jp_pct": 46.09,
       "pct_actas": 19.2
     },
     {
       "ambito": "PERÚ",
       "region": "SAN MARTÍN",
-      "fp_votos": 204379,
-      "jp_votos": 243994,
-      "fp_pct": 45.58,
-      "jp_pct": 54.42,
-      "pct_actas": 92.3
+      "fp_votos": 221705,
+      "jp_votos": 265457,
+      "fp_pct": 45.51,
+      "jp_pct": 54.49,
+      "pct_actas": 94.5
+    },
+    {
+      "ambito": "PERÚ",
+      "region": "ICA",
+      "fp_votos": 243566,
+      "jp_votos": 229941,
+      "fp_pct": 51.44,
+      "jp_pct": 48.56,
+      "pct_actas": 97.3
     },
     {
       "ambito": "PERÚ",
       "region": "HUÁNUCO",
-      "fp_votos": 142715,
-      "jp_votos": 257831,
-      "fp_pct": 35.63,
-      "jp_pct": 64.37,
-      "pct_actas": 91.2
+      "fp_votos": 142473,
+      "jp_votos": 257233,
+      "fp_pct": 35.64,
+      "jp_pct": 64.36,
+      "pct_actas": 91.6
     },
     {
       "ambito": "PERÚ",
       "region": "AYACUCHO",
-      "fp_votos": 69224,
-      "jp_votos": 266159,
+      "fp_votos": 69208,
+      "jp_votos": 266117,
       "fp_pct": 20.64,
       "jp_pct": 79.36,
-      "pct_actas": 85.8
+      "pct_actas": 86.2
     },
     {
       "ambito": "PERÚ",
       "region": "UCAYALI",
-      "fp_votos": 151274,
-      "jp_votos": 136362,
-      "fp_pct": 52.59,
-      "jp_pct": 47.41,
+      "fp_votos": 151226,
+      "jp_votos": 136409,
+      "fp_pct": 52.58,
+      "jp_pct": 47.42,
       "pct_actas": 66.7
+    },
+    {
+      "ambito": "PERÚ",
+      "region": "APURÍMAC",
+      "fp_votos": 44023,
+      "jp_votos": 187504,
+      "fp_pct": 19.01,
+      "jp_pct": 80.99,
+      "pct_actas": 94.2
     },
     {
       "ambito": "PERÚ",
@@ -176,57 +194,48 @@
     },
     {
       "ambito": "PERÚ",
-      "region": "APURÍMAC",
-      "fp_votos": 43899,
-      "jp_votos": 187044,
-      "fp_pct": 19.01,
-      "jp_pct": 80.99,
-      "pct_actas": 93.8
-    },
-    {
-      "ambito": "PERÚ",
       "region": "HUANCAVELICA",
-      "fp_votos": 37354,
-      "jp_votos": 165420,
-      "fp_pct": 18.42,
-      "jp_pct": 81.58,
+      "fp_votos": 37364,
+      "jp_votos": 165410,
+      "fp_pct": 18.43,
+      "jp_pct": 81.57,
       "pct_actas": 82.9
     },
     {
       "ambito": "PERÚ",
-      "region": "CALLAO",
-      "fp_votos": 116526,
-      "jp_votos": 84559,
-      "fp_pct": 57.95,
-      "jp_pct": 42.05,
-      "pct_actas": 0.0
-    },
-    {
-      "ambito": "PERÚ",
       "region": "AMAZONAS",
-      "fp_votos": 62749,
-      "jp_votos": 109582,
-      "fp_pct": 36.41,
-      "jp_pct": 63.59,
-      "pct_actas": 95.8
+      "fp_votos": 71274,
+      "jp_votos": 131164,
+      "fp_pct": 35.21,
+      "jp_pct": 64.79,
+      "pct_actas": 94.1
     },
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 108012,
-      "jp_votos": 59006,
-      "fp_pct": 64.67,
-      "jp_pct": 35.33,
+      "fp_votos": 108710,
+      "jp_votos": 58445,
+      "fp_pct": 65.04,
+      "jp_pct": 34.96,
+      "pct_actas": 0.0
+    },
+    {
+      "ambito": "EXTRANJERO",
+      "region": "EUROPA",
+      "fp_votos": 81757,
+      "jp_votos": 53001,
+      "fp_pct": 60.67,
+      "jp_pct": 39.33,
       "pct_actas": 0.0
     },
     {
       "ambito": "PERÚ",
       "region": "PASCO",
-      "fp_votos": 51275,
-      "jp_votos": 78563,
-      "fp_pct": 39.49,
-      "jp_pct": 60.51,
-      "pct_actas": 92.0
+      "fp_votos": 51440,
+      "jp_votos": 78718,
+      "fp_pct": 39.52,
+      "jp_pct": 60.48,
+      "pct_actas": 92.6
     },
     {
       "ambito": "PERÚ",
@@ -257,38 +266,29 @@
     },
     {
       "ambito": "EXTRANJERO",
-      "region": "EUROPA",
-      "fp_votos": 58997,
-      "jp_votos": 35545,
-      "fp_pct": 62.4,
-      "jp_pct": 37.6,
-      "pct_actas": 0.0
-    },
-    {
-      "ambito": "EXTRANJERO",
       "region": "ASIA",
-      "fp_votos": 6115,
-      "jp_votos": 3169,
-      "fp_pct": 65.87,
-      "jp_pct": 34.13,
+      "fp_votos": 6147,
+      "jp_votos": 3183,
+      "fp_pct": 65.88,
+      "jp_pct": 34.12,
       "pct_actas": 0.0
     },
     {
       "ambito": "EXTRANJERO",
       "region": "OCEANÍA",
-      "fp_votos": 1753,
-      "jp_votos": 582,
-      "fp_pct": 75.07,
-      "jp_pct": 24.93,
+      "fp_votos": 1773,
+      "jp_votos": 562,
+      "fp_pct": 75.93,
+      "jp_pct": 24.07,
       "pct_actas": 0.0
     },
     {
       "ambito": "EXTRANJERO",
       "region": "ÁFRICA",
-      "fp_votos": 88,
-      "jp_votos": 69,
-      "fp_pct": 56.05,
-      "jp_pct": 43.95,
+      "fp_votos": 90,
+      "jp_votos": 71,
+      "fp_pct": 55.9,
+      "jp_pct": 44.1,
       "pct_actas": 0.0
     }
   ],
@@ -297,76 +297,76 @@
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
       "remaining_actas": 1570,
-      "fp_remaining_pct": 64.7,
+      "fp_remaining_pct": 65.0,
       "favors": "FP"
     },
     {
       "region": "LORETO",
       "ambito": "PERÚ",
       "remaining_actas": 1086,
-      "fp_remaining_pct": 51.1,
+      "fp_remaining_pct": 50.9,
       "favors": "FP"
     },
     {
       "region": "LIMA",
       "ambito": "PERÚ",
-      "remaining_actas": 926,
+      "remaining_actas": 923,
       "fp_remaining_pct": 63.8,
       "favors": "FP"
     },
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 619,
-      "fp_remaining_pct": 62.4,
+      "remaining_actas": 831,
+      "fp_remaining_pct": 60.7,
       "favors": "FP"
     },
     {
       "region": "CUSCO",
       "ambito": "PERÚ",
-      "remaining_actas": 384,
+      "remaining_actas": 383,
       "fp_remaining_pct": 15.5,
-      "favors": "JP"
-    },
-    {
-      "region": "PIURA",
-      "ambito": "PERÚ",
-      "remaining_actas": 270,
-      "fp_remaining_pct": 31.9,
       "favors": "JP"
     },
     {
       "region": "JUNÍN",
       "ambito": "PERÚ",
-      "remaining_actas": 268,
-      "fp_remaining_pct": 36.7,
+      "remaining_actas": 262,
+      "fp_remaining_pct": 35.7,
       "favors": "JP"
     },
     {
       "region": "AYACUCHO",
       "ambito": "PERÚ",
-      "remaining_actas": 261,
+      "remaining_actas": 259,
       "fp_remaining_pct": 18.7,
+      "favors": "JP"
+    },
+    {
+      "region": "PIURA",
+      "ambito": "PERÚ",
+      "remaining_actas": 243,
+      "fp_remaining_pct": 33.8,
       "favors": "JP"
     },
     {
       "region": "UCAYALI",
       "ambito": "PERÚ",
       "remaining_actas": 201,
-      "fp_remaining_pct": 47.3,
+      "fp_remaining_pct": 47.2,
       "favors": "JP"
     },
     {
-      "region": "CAJAMARCA",
+      "region": "SAN MARTÍN",
       "ambito": "PERÚ",
-      "remaining_actas": 181,
-      "fp_remaining_pct": 25.8,
+      "remaining_actas": 173,
+      "fp_remaining_pct": 40.4,
       "favors": "JP"
     }
   ],
   "fuente_breakdown": {
-    "distrito": 1722,
-    "similitud": 324,
+    "distrito": 1744,
+    "similitud": 327,
     "default": 18
   },
   "history": [
@@ -391,6 +391,17 @@
       "fp_win_prob": 0.5,
       "jp_win_prob": 99.5,
       "margin_mean": -0.38
+    },
+    {
+      "timestamp": "2026-06-08 12:33:00",
+      "pct_actas": 91.87,
+      "fp_pct_actual": 50.288,
+      "jp_pct_actual": 49.712,
+      "fp_pct_proyectado": 50.104,
+      "jp_pct_proyectado": 49.896,
+      "fp_win_prob": 74.03,
+      "jp_win_prob": 25.97,
+      "margin_mean": 0.102
     }
   ]
 }
