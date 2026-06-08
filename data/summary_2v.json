@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-08T23:25:17.744699",
-  "pct_actas": 94.66,
+  "timestamp": "2026-06-08T23:39:02.423475",
+  "pct_actas": 94.72,
   "fp": {
-    "votos_actuales": 8821586,
-    "votos_proyectados": 9346100,
+    "votos_actuales": 8824170,
+    "votos_proyectados": 9347205,
     "pct_actual": 49.92,
-    "pct_proyectado": 50.25,
-    "win_probability": 91.9
+    "pct_proyectado": 50.2,
+    "win_probability": 86.93
   },
   "jp": {
-    "votos_actuales": 8849715,
-    "votos_proyectados": 9252265,
+    "votos_actuales": 8853317,
+    "votos_proyectados": 9272430,
     "pct_actual": 50.08,
-    "pct_proyectado": 49.75,
-    "win_probability": 8.1
+    "pct_proyectado": 49.8,
+    "win_probability": 13.07
   },
   "margin": {
-    "mean": 0.253,
-    "p5": -0.042,
-    "p95": 0.543
+    "mean": 0.2,
+    "p5": -0.103,
+    "p95": 0.489
   },
   "regions": [
     {
@@ -51,29 +51,29 @@
     {
       "ambito": "PERÚ",
       "region": "AREQUIPA",
-      "fp_votos": 334238,
-      "jp_votos": 583967,
+      "fp_votos": 334226,
+      "jp_votos": 583964,
       "fp_pct": 36.4,
       "jp_pct": 63.6,
-      "pct_actas": 98.8
+      "pct_actas": 99.0
     },
     {
       "ambito": "PERÚ",
       "region": "CUSCO",
-      "fp_votos": 167484,
-      "jp_votos": 606174,
-      "fp_pct": 21.65,
-      "jp_pct": 78.35,
+      "fp_votos": 170752,
+      "jp_votos": 627194,
+      "fp_pct": 21.4,
+      "jp_pct": 78.6,
       "pct_actas": 91.4
     },
     {
       "ambito": "PERÚ",
       "region": "LAMBAYEQUE",
-      "fp_votos": 437422,
-      "jp_votos": 305871,
+      "fp_votos": 437384,
+      "jp_votos": 305776,
       "fp_pct": 58.85,
       "jp_pct": 41.15,
-      "pct_actas": 99.7
+      "pct_actas": 99.8
     },
     {
       "ambito": "PERÚ",
@@ -141,11 +141,11 @@
     {
       "ambito": "PERÚ",
       "region": "LORETO",
-      "fp_votos": 231264,
-      "jp_votos": 203816,
-      "fp_pct": 53.15,
-      "jp_pct": 46.85,
-      "pct_actas": 58.9
+      "fp_votos": 228919,
+      "jp_votos": 201485,
+      "fp_pct": 53.19,
+      "jp_pct": 46.81,
+      "pct_actas": 61.2
     },
     {
       "ambito": "PERÚ",
@@ -168,8 +168,8 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 208172,
-      "jp_votos": 105335,
+      "fp_votos": 208170,
+      "jp_votos": 105337,
       "fp_pct": 66.4,
       "jp_pct": 33.6,
       "pct_actas": 18.7
@@ -177,8 +177,8 @@
     {
       "ambito": "PERÚ",
       "region": "UCAYALI",
-      "fp_votos": 143891,
-      "jp_votos": 128966,
+      "fp_votos": 143882,
+      "jp_votos": 128976,
       "fp_pct": 52.73,
       "jp_pct": 47.27,
       "pct_actas": 90.9
@@ -204,11 +204,11 @@
     {
       "ambito": "PERÚ",
       "region": "AMAZONAS",
-      "fp_votos": 70801,
-      "jp_votos": 129809,
-      "fp_pct": 35.29,
-      "jp_pct": 64.71,
-      "pct_actas": 96.2
+      "fp_votos": 71044,
+      "jp_votos": 131371,
+      "fp_pct": 35.1,
+      "jp_pct": 64.9,
+      "pct_actas": 96.8
     },
     {
       "ambito": "PERÚ",
@@ -320,25 +320,25 @@
     {
       "region": "LORETO",
       "ambito": "PERÚ",
-      "remaining_actas": 553,
-      "remaining_votos": 89400,
-      "fp_remaining_pct": 47.2,
+      "remaining_actas": 507,
+      "remaining_votos": 80658,
+      "fp_remaining_pct": 46.5,
       "favors": "JP"
     },
     {
       "region": "CUSCO",
       "ambito": "PERÚ",
       "remaining_actas": 287,
-      "remaining_votos": 57329,
-      "fp_remaining_pct": 16.6,
+      "remaining_votos": 80105,
+      "fp_remaining_pct": 15.8,
       "favors": "JP"
     },
     {
       "region": "AMAZONAS",
       "ambito": "PERÚ",
-      "remaining_actas": 107,
-      "remaining_votos": 16876,
-      "fp_remaining_pct": 16.8,
+      "remaining_actas": 104,
+      "remaining_votos": 18125,
+      "fp_remaining_pct": 16.5,
       "favors": "JP"
     },
     {
@@ -375,8 +375,8 @@
     }
   ],
   "fuente_breakdown": {
-    "distrito": 1872,
-    "similitud": 213,
+    "distrito": 1873,
+    "similitud": 212,
     "default": 17
   },
   "history": [
@@ -654,6 +654,17 @@
       "fp_win_prob": 91.9,
       "jp_win_prob": 8.1,
       "margin_mean": 0.253
+    },
+    {
+      "timestamp": "2026-06-08 23:38:57",
+      "pct_actas": 94.72,
+      "fp_pct_actual": 49.918,
+      "jp_pct_actual": 50.082,
+      "fp_pct_proyectado": 50.201,
+      "jp_pct_proyectado": 49.799,
+      "fp_win_prob": 86.93,
+      "jp_win_prob": 13.07,
+      "margin_mean": 0.2
     }
   ]
 }
