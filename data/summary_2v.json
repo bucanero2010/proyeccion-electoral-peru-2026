@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-08T16:49:12.720214",
+  "timestamp": "2026-06-08T16:55:04.729812",
   "pct_actas": 93.22,
   "fp": {
     "votos_actuales": 8759561,
@@ -294,30 +294,34 @@
   ],
   "remaining_by_region": [
     {
-      "region": "AMÉRICA",
-      "ambito": "EXTRANJERO",
-      "remaining_actas": 1563,
-      "fp_remaining_pct": 65.2,
+      "region": "LIMA",
+      "ambito": "PERÚ",
+      "remaining_actas": 924,
+      "remaining_votos": 203326,
+      "fp_remaining_pct": 63.8,
       "favors": "FP"
     },
     {
       "region": "LORETO",
       "ambito": "PERÚ",
       "remaining_actas": 1031,
+      "remaining_votos": 186241,
       "fp_remaining_pct": 50.4,
       "favors": "FP"
     },
     {
-      "region": "LIMA",
-      "ambito": "PERÚ",
-      "remaining_actas": 924,
-      "fp_remaining_pct": 63.8,
+      "region": "AMÉRICA",
+      "ambito": "EXTRANJERO",
+      "remaining_actas": 1563,
+      "remaining_votos": 166551,
+      "fp_remaining_pct": 65.2,
       "favors": "FP"
     },
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
       "remaining_actas": 839,
+      "remaining_votos": 135787,
       "fp_remaining_pct": 60.7,
       "favors": "FP"
     },
@@ -325,6 +329,7 @@
       "region": "CUSCO",
       "ambito": "PERÚ",
       "remaining_actas": 350,
+      "remaining_votos": 70343,
       "fp_remaining_pct": 15.9,
       "favors": "JP"
     },
@@ -332,6 +337,7 @@
       "region": "AYACUCHO",
       "ambito": "PERÚ",
       "remaining_actas": 237,
+      "remaining_votos": 43831,
       "fp_remaining_pct": 18.8,
       "favors": "JP"
     },
@@ -339,6 +345,7 @@
       "region": "UCAYALI",
       "ambito": "PERÚ",
       "remaining_actas": 198,
+      "remaining_votos": 34260,
       "fp_remaining_pct": 47.4,
       "favors": "JP"
     },
@@ -346,21 +353,24 @@
       "region": "AMAZONAS",
       "ambito": "PERÚ",
       "remaining_actas": 149,
+      "remaining_votos": 22908,
       "fp_remaining_pct": 16.5,
       "favors": "JP"
-    },
-    {
-      "region": "ASIA",
-      "ambito": "EXTRANJERO",
-      "remaining_actas": 107,
-      "fp_remaining_pct": 65.9,
-      "favors": "FP"
     },
     {
       "region": "HUANCAVELICA",
       "ambito": "PERÚ",
       "remaining_actas": 96,
+      "remaining_votos": 15584,
       "fp_remaining_pct": 19.0,
+      "favors": "JP"
+    },
+    {
+      "region": "SAN MARTÍN",
+      "ambito": "PERÚ",
+      "remaining_actas": 71,
+      "remaining_votos": 15069,
+      "fp_remaining_pct": 35.3,
       "favors": "JP"
     }
   ],
@@ -482,6 +492,17 @@
     },
     {
       "timestamp": "2026-06-08 16:49:07",
+      "pct_actas": 93.22,
+      "fp_pct_actual": 50.066,
+      "jp_pct_actual": 49.934,
+      "fp_pct_proyectado": 50.099,
+      "jp_pct_proyectado": 49.901,
+      "fp_win_prob": 74.47,
+      "jp_win_prob": 25.53,
+      "margin_mean": 0.094
+    },
+    {
+      "timestamp": "2026-06-08 16:54:59",
       "pct_actas": 93.22,
       "fp_pct_actual": 50.066,
       "jp_pct_actual": 49.934,
