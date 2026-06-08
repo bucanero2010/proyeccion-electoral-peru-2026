@@ -5,6 +5,8 @@ FP vs JP at distrito level.
 """
 
 import os
+import argparse
+import glob
 import requests
 import csv
 import json
@@ -107,7 +109,49 @@ def fetch_distrito(id_ambito, ambito_name, nom_d, ub_d, nom_p, ub_p, dist):
     return rows
 
 
+def load_completed_districts(skip_completed):
+    """Load rows from the most recent 2v CSV for districts already at 100%.
+
+    Returns:
+        completed_rows: list of dicts ready to write to the new CSV
+        completed_ubigeos: set of ubigeo_distrito strings to skip
+    """
+    if not skip_completed:
+        return [], set()
+
+    files = sorted(glob.glob(os.path.join(DATA_DIR, "resultados_2v_*.csv")))
+    if not files:
+        print("No prior CSV found. Will scrape all districts.")
+        return [], set()
+
+    src = files[-1]
+    completed_rows = []
+    completed_ubigeos = set()
+    with open(src, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            try:
+                pct = float(row.get("pct_actas_contabilizadas", "") or 0)
+            except ValueError:
+                pct = 0
+            if pct >= 100:
+                completed_rows.append(row)
+                completed_ubigeos.add(row["ubigeo_distrito"])
+
+    print(f"Reusing {len(completed_ubigeos)} districts at 100% from {os.path.basename(src)} ({len(completed_rows)} rows)")
+    return completed_rows, completed_ubigeos
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Scraper segunda vuelta presidencial Perú 2026")
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Re-scrape every district (default skips districts already at 100%% from the previous run).",
+    )
+    args = parser.parse_args()
+    skip_completed = not args.full
+
     os.makedirs(DATA_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = os.path.join(DATA_DIR, f"resultados_2v_{timestamp}.csv")
@@ -129,13 +173,24 @@ def main():
         print("ERROR: No ubigeo cache. Run 1ra vuelta scraper first.")
         return
 
+    completed_rows, skip_ubigeos = load_completed_districts(skip_completed)
+
     total_rows = 0
     total_distritos = 0
+    skipped_distritos = 0
     t0 = time.time()
 
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
+
+        # Carry forward rows for districts already at 100%
+        for row in completed_rows:
+            # Only keep the columns we declare (drop extras if older CSV had them)
+            writer.writerow({k: row.get(k, "") for k in fieldnames})
+        total_rows += len(completed_rows)
+        skipped_distritos = len(skip_ubigeos)
+        total_distritos = skipped_distritos
 
         for ambito in hierarchy:
             id_ambito = ambito["id"]
@@ -148,13 +203,16 @@ def main():
                 for prov in dep["provs"]:
                     ub_p = prov["ubigeo"]
                     nom_p = prov["nombre"]
-                    dists = prov["dists"]
+                    dists_to_fetch = [d for d in prov["dists"] if d["ubigeo"] not in skip_ubigeos]
+
+                    if not dists_to_fetch:
+                        continue
 
                     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
                         futures = {
                             pool.submit(fetch_distrito, id_ambito, ambito_name,
                                         nom_d, ub_d, nom_p, ub_p, d): d
-                            for d in dists
+                            for d in dists_to_fetch
                         }
                         for future in as_completed(futures):
                             rows = future.result()
@@ -165,8 +223,10 @@ def main():
 
                     f.flush()
                     elapsed = time.time() - t0
-                    rate = total_distritos / elapsed if elapsed > 0 else 0
-                    print(f"  {ambito_name} > {nom_d} > {nom_p}: {len(dists)} dist [{total_distritos} total, {rate:.1f}/s]")
+                    rate = (total_distritos - skipped_distritos) / elapsed if elapsed > 0 else 0
+                    skipped_in_prov = len(prov["dists"]) - len(dists_to_fetch)
+                    skipped_note = f" (+{skipped_in_prov} cached)" if skipped_in_prov else ""
+                    print(f"  {ambito_name} > {nom_d} > {nom_p}: {len(dists_to_fetch)} dist{skipped_note} [{total_distritos} total, {rate:.1f}/s scraped]")
 
             print(f"\n{ambito_name} completado.\n")
 
@@ -174,6 +234,9 @@ def main():
     print(f"\n{'='*60}")
     print(f"SEGUNDA VUELTA")
     print(f"Completado: {total_rows} filas, {total_distritos} distritos")
+    if skip_completed:
+        scraped = total_distritos - skipped_distritos
+        print(f"  Reusados (100%): {skipped_distritos} | Scrapeados: {scraped}")
     print(f"Tiempo: {elapsed/60:.1f} min")
     print(f"Archivo: {filename}")
     print(f"API requests: {request_count}")
