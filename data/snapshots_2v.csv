@@ -1,0 +1,3 @@
+timestamp,pct_actas,fp_votos_actuales,jp_votos_actuales,fp_pct_actual,jp_pct_actual,fp_votos_proyectados,jp_votos_proyectados,fp_pct_proyectado,jp_pct_proyectado,fp_win_prob,jp_win_prob,margin_mean,margin_p5,margin_p95
+2026-06-08 10:54:57,89.08,8491039,8222406,50.804,49.196,9068352,9052457,50.044,49.956,66.07,33.93,0.045,-0.147,0.247
+2026-06-08 11:04:58,89.08,8491039,8222406,50.804,49.196,9068352,9052457,50.044,49.956,66.07,33.93,0.045,-0.147,0.247
