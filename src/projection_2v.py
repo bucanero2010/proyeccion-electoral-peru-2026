@@ -22,7 +22,8 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 from snapshot_2v import save_2v_snapshot, load_snapshots  # noqa: E402
 
 THRESHOLD = 30.0
-SIM_K = 20  # number of similar districts to consider per fallback
+SIM_K = 100  # candidate pool of similar districts (we walk this list)
+SIM_USE = 10  # max reliable neighbors to actually average
 SIM_MIN_NEIGHBORS = 3  # minimum reliable neighbors required to use similarity
 
 
@@ -92,11 +93,27 @@ def build_1v_similarity_index(df_1v, k=SIM_K):
     for i, ub in enumerate(ubigeos):
         scores = sim[i].copy()
         scores[i] = -1.0
-        top = np.argpartition(-scores, k)[:k]
-        # sort that subset descending
+        # Take more than K just in case k > n_districts
+        n_take = min(k, len(ubigeos) - 1)
+        top = np.argpartition(-scores, n_take - 1)[:n_take]
+        # Sort that subset descending
         top = top[np.argsort(-scores[top])]
         sim_index[ub] = [(ubigeos[j], float(scores[j])) for j in top if scores[j] > 0]
     return sim_index
+
+
+def build_1v_vpa(df_1v):
+    """
+    Compute valid votes per counted acta for every district from 1ra vuelta 2026.
+    Used as a magnitude estimator for districts where the 2v counted=0
+    and the regional vpa is also zero (typical of extranjero at 0% actas).
+    """
+    special = {"VOTOS EN BLANCO", "VOTOS NULOS"}
+    valid = df_1v[~df_1v["partido"].isin(special)]
+    votes = valid.groupby("ubigeo_distrito")["votos"].sum()
+    actas = df_1v.groupby("ubigeo_distrito")["actas_contabilizadas"].max()
+    vpa = (votes / actas).replace([np.inf, -np.inf], np.nan).fillna(0)
+    return vpa.to_dict()
 
 
 def lookup_similarity_props(target_ubigeo, sim_index, district_props_2v, district_pcts_2v, threshold):
@@ -120,9 +137,11 @@ def lookup_similarity_props(target_ubigeo, sim_index, district_props_2v, distric
     weighted = defaultdict(float)
     total_weight = 0.0
     n_used = 0
+    # Walk the candidate list (sorted by descending similarity) and
+    # collect up to SIM_USE neighbors that already have enough 2v actas.
     for neighbor_ub, score in sim_index[target_ubigeo]:
         if score <= 0:
-            continue
+            break
         if district_pcts_2v.get(neighbor_ub, 0) < threshold:
             continue
         props = district_props_2v.get(neighbor_ub)
@@ -132,6 +151,8 @@ def lookup_similarity_props(target_ubigeo, sim_index, district_props_2v, distric
             weighted[partido] += prop * score
         total_weight += score
         n_used += 1
+        if n_used >= SIM_USE:
+            break
 
     if total_weight == 0 or n_used < SIM_MIN_NEIGHBORS:
         return None, n_used
@@ -139,12 +160,16 @@ def lookup_similarity_props(target_ubigeo, sim_index, district_props_2v, distric
     return {p: v / total_weight for p, v in weighted.items()}, n_used
 
 
-def project_2v(df_2v, sim_index=None):
+def project_2v(df_2v, sim_index=None, vpa_1v=None):
     """Project 2nd round results using similarity from 1ra vuelta 2026.
 
     For low-actas districts, the cascade is:
         similar districts (1v 2026 vectors, ≥3 reliable 2v neighbors)
         → provincia → region → ambito → 50/50 default.
+
+    Vote magnitudes (votes per acta) are estimated from the district's
+    own counted actas first, then regional avg, then 1ra vuelta 2026 vpa
+    (so we still get a count for districts at 0%).
     """
     geo = ["ambito", "region", "provincia", "distrito"]
 
@@ -253,11 +278,21 @@ def project_2v(df_2v, sim_index=None):
         if actas_contab > 0 and total_actas > 0:
             estimated_total = counted * (total_actas / actas_contab)
         elif total_actas > 0 and counted == 0:
-            # Use avg vpa from region
+            # Cascade for vote-magnitude estimate when this district has 0 counted actas.
+            # 1) regional vpa from 2v if any 2v acta in the region was counted
             r_sub = merged[(merged["ambito"] == row["ambito"]) & (merged["region"] == row["region"])]
             r_contab = r_sub["actas_contab"].sum()
             if r_contab > 0:
                 avg_vpa = r_sub["total_votos_dist"].sum() / r_contab
+                estimated_total = avg_vpa * total_actas
+            elif vpa_1v is not None and vpa_1v.get(ub, 0) > 0:
+                # 2) per-district vpa from 1ra vuelta 2026 (covers 0%-actas regions like extranjero)
+                estimated_total = vpa_1v[ub] * total_actas
+            elif vpa_1v is not None:
+                # 3) last resort: ambito-wide vpa from 1ra vuelta 2026
+                ambito_ubigeos = merged[merged["ambito"] == row["ambito"]]["ubigeo_distrito"].tolist()
+                ambito_vpas = [vpa_1v.get(u, 0) for u in ambito_ubigeos if vpa_1v.get(u, 0) > 0]
+                avg_vpa = sum(ambito_vpas) / len(ambito_vpas) if ambito_vpas else 0
                 estimated_total = avg_vpa * total_actas
             else:
                 estimated_total = 0
@@ -287,12 +322,15 @@ def main():
 
     df_1v = load_1v_final()
     sim_index = None
+    vpa_1v = None
     if df_1v is not None:
         sim_index = build_1v_similarity_index(df_1v, k=SIM_K)
         avg_neighbors = np.mean([len(v) for v in sim_index.values()])
         print(f"1v similarity index built: {len(sim_index)} districts, avg {avg_neighbors:.1f} neighbors each")
+        vpa_1v = build_1v_vpa(df_1v)
+        print(f"1v vpa loaded for {len(vpa_1v)} districts")
 
-    proj = project_2v(df_2v, sim_index)
+    proj = project_2v(df_2v, sim_index, vpa_1v)
 
     # Results
     candidates = ["FUERZA POPULAR", "JUNTOS POR EL PERÚ"]
