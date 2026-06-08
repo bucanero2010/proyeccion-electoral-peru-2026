@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-08T23:52:32.443986",
-  "pct_actas": 94.88,
+  "timestamp": "2026-06-09T00:06:01.569059",
+  "pct_actas": 94.92,
   "fp": {
-    "votos_actuales": 8824568,
-    "votos_proyectados": 9335400,
+    "votos_actuales": 8824569,
+    "votos_proyectados": 9277497,
     "pct_actual": 49.91,
-    "pct_proyectado": 50.26,
-    "win_probability": 93.07
+    "pct_proyectado": 50.19,
+    "win_probability": 90.3
   },
   "jp": {
-    "votos_actuales": 8854867,
-    "votos_proyectados": 9237256,
+    "votos_actuales": 8855008,
+    "votos_proyectados": 9206657,
     "pct_actual": 50.09,
-    "pct_proyectado": 49.74,
-    "win_probability": 6.93
+    "pct_proyectado": 49.81,
+    "win_probability": 9.7
   },
   "margin": {
-    "mean": 0.271,
-    "p5": -0.024,
-    "p95": 0.552
+    "mean": 0.193,
+    "p5": -0.056,
+    "p95": 0.429
   },
   "regions": [
     {
@@ -166,15 +166,6 @@
       "pct_actas": 97.0
     },
     {
-      "ambito": "EXTRANJERO",
-      "region": "AMÉRICA",
-      "fp_votos": 208170,
-      "jp_votos": 105337,
-      "fp_pct": 66.4,
-      "jp_pct": 33.6,
-      "pct_actas": 18.7
-    },
-    {
       "ambito": "PERÚ",
       "region": "UCAYALI",
       "fp_votos": 143882,
@@ -182,6 +173,15 @@
       "fp_pct": 52.73,
       "jp_pct": 47.27,
       "pct_actas": 90.9
+    },
+    {
+      "ambito": "EXTRANJERO",
+      "region": "AMÉRICA",
+      "fp_votos": 156726,
+      "jp_votos": 78772,
+      "fp_pct": 66.55,
+      "jp_pct": 33.45,
+      "pct_actas": 19.8
     },
     {
       "ambito": "PERÚ",
@@ -204,10 +204,10 @@
     {
       "ambito": "PERÚ",
       "region": "AMAZONAS",
-      "fp_votos": 71028,
-      "jp_votos": 131415,
-      "fp_pct": 35.09,
-      "jp_pct": 64.91,
+      "fp_votos": 70902,
+      "jp_votos": 130538,
+      "fp_pct": 35.2,
+      "jp_pct": 64.8,
       "pct_actas": 96.8
     },
     {
@@ -266,29 +266,11 @@
     },
     {
       "ambito": "EXTRANJERO",
-      "region": "ASIA",
-      "fp_votos": 6244,
-      "jp_votos": 3085,
-      "fp_pct": 66.93,
-      "jp_pct": 33.07,
-      "pct_actas": 0.0
-    },
-    {
-      "ambito": "EXTRANJERO",
       "region": "OCEANÍA",
       "fp_votos": 1739,
       "jp_votos": 596,
       "fp_pct": 74.48,
       "jp_pct": 25.52,
-      "pct_actas": 0.0
-    },
-    {
-      "ambito": "EXTRANJERO",
-      "region": "ÁFRICA",
-      "fp_votos": 89,
-      "jp_votos": 72,
-      "fp_pct": 55.28,
-      "jp_pct": 44.72,
       "pct_actas": 0.0
     }
   ],
@@ -296,9 +278,9 @@
     {
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 1467,
-      "remaining_votos": 294530,
-      "fp_remaining_pct": 67.0,
+      "remaining_actas": 1433,
+      "remaining_votos": 216521,
+      "fp_remaining_pct": 67.4,
       "favors": "FP"
     },
     {
@@ -336,9 +318,9 @@
     {
       "region": "AMAZONAS",
       "ambito": "PERÚ",
-      "remaining_actas": 103,
-      "remaining_votos": 18027,
-      "fp_remaining_pct": 16.5,
+      "remaining_actas": 102,
+      "remaining_votos": 16882,
+      "fp_remaining_pct": 16.9,
       "favors": "JP"
     },
     {
@@ -366,18 +348,18 @@
       "favors": "JP"
     },
     {
-      "region": "ASIA",
-      "ambito": "EXTRANJERO",
-      "remaining_actas": 107,
-      "remaining_votos": 9329,
-      "fp_remaining_pct": 66.9,
+      "region": "UCAYALI",
+      "ambito": "PERÚ",
+      "remaining_actas": 57,
+      "remaining_votos": 8475,
+      "fp_remaining_pct": 52.0,
       "favors": "FP"
     }
   ],
   "fuente_breakdown": {
-    "distrito": 1878,
+    "distrito": 1881,
     "similitud": 207,
-    "default": 17
+    "default": 14
   },
   "history": [
     {
@@ -676,6 +658,17 @@
       "fp_win_prob": 93.07,
       "jp_win_prob": 6.93,
       "margin_mean": 0.271
+    },
+    {
+      "timestamp": "2026-06-09 00:05:56",
+      "pct_actas": 94.92,
+      "fp_pct_actual": 49.914,
+      "jp_pct_actual": 50.086,
+      "fp_pct_proyectado": 50.192,
+      "jp_pct_proyectado": 49.808,
+      "fp_win_prob": 90.3,
+      "jp_win_prob": 9.7,
+      "margin_mean": 0.193
     }
   ]
 }
