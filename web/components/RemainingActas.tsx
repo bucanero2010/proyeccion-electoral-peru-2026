@@ -6,7 +6,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
+  Legend,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -15,12 +15,12 @@ import {
 } from "recharts";
 
 const FUENTE_COLORS: Record<string, string> = {
-  distrito: "#60a5fa", // blue-400
-  similitud: "#a78bfa", // violet-400
-  provincia: "#f472b6", // pink-400
-  region: "#fb923c", // orange-400
-  ambito: "#fbbf24", // amber-400
-  default: "#6b7280", // gray-500
+  distrito: "#60a5fa",   // blue-400
+  similitud: "#a78bfa",  // violet-400
+  provincia: "#f472b6",  // pink-400
+  region: "#fb923c",     // orange-400
+  ambito: "#fbbf24",     // amber-400
+  default: "#6b7280",    // gray-500
 };
 
 const FUENTE_LABELS: Record<string, string> = {
@@ -32,25 +32,49 @@ const FUENTE_LABELS: Record<string, string> = {
   default: "Sin datos (50/50)",
 };
 
+// All possible fuente keys in order of precedence
+const FUENTE_KEYS = ["distrito", "similitud", "provincia", "region", "ambito", "default"];
+
 export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
   if (!rows || rows.length === 0) return null;
 
-  // Filter to regions that actually have remaining votes
   const withData = rows.filter((r) => r.remaining_votos > 0);
-  // Already sorted by net_fp desc from the backend
+
+  // For each region, compute signed contribution per fuente.
+  // If region favors FP (net_fp > 0): each fuente contributes positively proportional to its share.
+  // If JP: each fuente contributes negatively.
+  // The magnitude is: (fuente_votos / total_remaining_votos) * net_fp
+  const chartData = withData.map((r) => {
+    const entry: Record<string, string | number> = {
+      region: r.region,
+      ambito: r.ambito,
+      net_fp: r.net_fp,
+      remaining_votos: r.remaining_votos,
+      fp_votos: r.fp_remaining_votos,
+      jp_votos: r.jp_remaining_votos,
+      fp_pct: r.fp_remaining_pct,
+    };
+
+    // Distribute the net_fp across fuentes proportionally
+    const totalFuente = Object.values(r.by_fuente).reduce((a, b) => a + b, 0);
+    for (const key of FUENTE_KEYS) {
+      const fuenteVotos = r.by_fuente[key] ?? 0;
+      if (totalFuente > 0 && fuenteVotos > 0) {
+        // Each fuente's signed contribution = proportion of fuente × net_fp
+        entry[key] = Math.round((fuenteVotos / totalFuente) * r.net_fp);
+      } else {
+        entry[key] = 0;
+      }
+    }
+    return entry;
+  });
+
+  // Find which fuentes actually appear
+  const activeFuentes = FUENTE_KEYS.filter((key) =>
+    chartData.some((d) => (d[key] as number) !== 0)
+  );
 
   const maxAbs = Math.max(...withData.map((r) => Math.abs(r.net_fp)));
-
-  const chartData = withData.map((r) => ({
-    region: r.region,
-    ambito: r.ambito,
-    net_fp: r.net_fp,
-    remaining_votos: r.remaining_votos,
-    fp_votos: r.fp_remaining_votos,
-    jp_votos: r.jp_remaining_votos,
-    fp_pct: r.fp_remaining_pct,
-    by_fuente: r.by_fuente,
-  }));
 
   return (
     <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
@@ -58,15 +82,16 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
         Contribución neta por región (votos restantes)
       </h2>
       <p className="mt-1 text-xs text-[var(--muted-2)]">
-        Positivo = favorece FP · Negativo = favorece JP · Ordenado por contribución neta
+        Derecha (+ votos netos FP) · Izquierda (+ votos netos JP) · Coloreado por fuente de proyección
       </p>
 
-      <div className="mt-4" style={{ height: withData.length * 28 + 40 }}>
+      <div className="mt-4" style={{ height: withData.length * 28 + 60 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
             layout="vertical"
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+            stackOffset="sign"
           >
             <CartesianGrid stroke="#27272a" horizontal={false} />
             <XAxis
@@ -75,11 +100,11 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
               tickLine={false}
               axisLine={{ stroke: "#3f3f46" }}
               tickFormatter={(v) => {
-                const abs = Math.abs(v);
-                if (abs >= 1000) return `${(v / 1000).toFixed(0)}k`;
+                const abs = Math.abs(v as number);
+                if (abs >= 1000) return `${((v as number) / 1000).toFixed(0)}k`;
                 return String(v);
               }}
-              domain={[-maxAbs * 1.1, maxAbs * 1.1]}
+              domain={[-maxAbs * 1.15, maxAbs * 1.15]}
             />
             <YAxis
               type="category"
@@ -87,9 +112,9 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
               tick={{ fill: "#a1a1aa", fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              width={95}
+              width={100}
             />
-            <ReferenceLine x={0} stroke="#3f3f46" strokeWidth={1} />
+            <ReferenceLine x={0} stroke="#52525b" strokeWidth={1} />
             <Tooltip
               cursor={{ fill: "rgba(255,255,255,0.03)" }}
               contentStyle={{
@@ -99,50 +124,46 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
                 fontSize: 12,
                 color: "#fafafa",
               }}
-              labelStyle={{ color: "#fafafa", fontWeight: 600, marginBottom: 4 }}
               content={<CustomTooltip />}
             />
-            <Bar dataKey="net_fp" radius={[3, 3, 3, 3]} maxBarSize={20}>
-              {chartData.map((entry, idx) => (
-                <Cell
-                  key={idx}
-                  fill={entry.net_fp >= 0 ? FP_COLOR : JP_COLOR}
-                  opacity={0.85}
-                />
-              ))}
-            </Bar>
+            <Legend
+              wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
+              formatter={(value: string) => (
+                <span className="text-[var(--muted)]">
+                  {FUENTE_LABELS[value] ?? value}
+                </span>
+              )}
+            />
+            {activeFuentes.map((key) => (
+              <Bar
+                key={key}
+                dataKey={key}
+                stackId="a"
+                fill={FUENTE_COLORS[key]}
+                radius={0}
+                maxBarSize={18}
+              />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Legend for fuente colors */}
-      <div className="mt-4 flex flex-wrap gap-3 border-t border-[var(--border)] pt-3">
-        <span className="text-xs text-[var(--muted-2)]">Fuente de proyección:</span>
-        {Object.entries(FUENTE_COLORS).map(([key, color]) => (
-          <span key={key} className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
-            <span
-              className="inline-block size-2.5 rounded-sm"
-              style={{ backgroundColor: color }}
-            />
-            {FUENTE_LABELS[key] ?? key}
-          </span>
-        ))}
+      <div className="mt-3 flex items-center justify-center gap-6 text-xs text-[var(--muted-2)]">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-5 rounded-sm" style={{ backgroundColor: FP_COLOR }} />
+          ← Favorece FP
+        </span>
+        <span className="flex items-center gap-1.5">
+          Favorece JP →
+          <span className="inline-block h-2.5 w-5 rounded-sm" style={{ backgroundColor: JP_COLOR }} />
+        </span>
       </div>
     </section>
   );
 }
 
-type TooltipPayloadEntry = {
-  payload: {
-    region: string;
-    ambito: string;
-    net_fp: number;
-    remaining_votos: number;
-    fp_votos: number;
-    jp_votos: number;
-    fp_pct: number;
-    by_fuente: Record<string, number>;
-  };
+type TooltipEntry = {
+  payload: Record<string, string | number>;
 };
 
 function CustomTooltip({
@@ -150,60 +171,61 @@ function CustomTooltip({
   payload,
 }: {
   active?: boolean;
-  payload?: TooltipPayloadEntry[];
+  payload?: TooltipEntry[];
 }) {
   if (!active || !payload || !payload[0]) return null;
   const d = payload[0].payload;
+  const netFp = d.net_fp as number;
+  const fpVotos = d.fp_votos as number;
+  const jpVotos = d.jp_votos as number;
+  const fpPct = d.fp_pct as number;
+  const remainingVotos = d.remaining_votos as number;
 
   return (
     <div className="space-y-2 rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] p-3 text-xs shadow-lg">
-      <div>
-        <p className="font-semibold text-[var(--foreground)]">
-          {d.region}{" "}
-          <span className="font-normal text-[var(--muted-2)]">({d.ambito})</span>
-        </p>
-      </div>
+      <p className="font-semibold text-[var(--foreground)]">
+        {d.region as string}{" "}
+        <span className="font-normal text-[var(--muted-2)]">({d.ambito as string})</span>
+      </p>
 
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         <span className="text-[var(--muted)]">Votos restantes</span>
-        <span className="text-right font-medium">{fmtInt(d.remaining_votos)}</span>
+        <span className="text-right font-medium">{fmtInt(remainingVotos)}</span>
         <span className="text-[var(--muted)]">FP esperado</span>
         <span className="text-right font-medium" style={{ color: FP_COLOR }}>
-          {fmtInt(d.fp_votos)} ({d.fp_pct}%)
+          {fmtInt(fpVotos)} ({fpPct}%)
         </span>
         <span className="text-[var(--muted)]">JP esperado</span>
         <span className="text-right font-medium" style={{ color: JP_COLOR }}>
-          {fmtInt(d.jp_votos)} ({(100 - d.fp_pct).toFixed(1)}%)
+          {fmtInt(jpVotos)} ({(100 - fpPct).toFixed(1)}%)
         </span>
         <span className="text-[var(--muted)]">Neto</span>
         <span
           className="text-right font-semibold"
-          style={{ color: d.net_fp >= 0 ? FP_COLOR : JP_COLOR }}
+          style={{ color: netFp >= 0 ? FP_COLOR : JP_COLOR }}
         >
-          {d.net_fp >= 0 ? "+" : ""}
-          {fmtInt(d.net_fp)} {d.net_fp >= 0 ? "FP" : "JP"}
+          {netFp >= 0 ? "+" : ""}
+          {fmtInt(netFp)} {netFp >= 0 ? "FP" : "JP"}
         </span>
       </div>
 
-      {Object.keys(d.by_fuente).length > 0 && (
-        <div className="border-t border-[var(--border)] pt-2">
-          <p className="mb-1 text-[var(--muted)]">Por fuente de proyección:</p>
-          {Object.entries(d.by_fuente)
-            .sort((a, b) => b[1] - a[1])
-            .map(([key, val]) => (
-              <div key={key} className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5">
-                  <span
-                    className="inline-block size-2 rounded-sm"
-                    style={{ backgroundColor: FUENTE_COLORS[key] ?? "#6b7280" }}
-                  />
-                  <span className="text-[var(--muted)]">{FUENTE_LABELS[key] ?? key}</span>
-                </span>
-                <span className="font-medium text-[var(--foreground)]">{fmtInt(val)}</span>
-              </div>
-            ))}
-        </div>
-      )}
+      <div className="border-t border-[var(--border)] pt-2">
+        <p className="mb-1 text-[var(--muted)]">Votos restantes por fuente:</p>
+        {FUENTE_KEYS.filter((k) => (d[k] as number) !== 0).map((key) => (
+          <div key={key} className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-1.5">
+              <span
+                className="inline-block size-2 rounded-sm"
+                style={{ backgroundColor: FUENTE_COLORS[key] }}
+              />
+              <span className="text-[var(--muted)]">{FUENTE_LABELS[key] ?? key}</span>
+            </span>
+            <span className="font-medium text-[var(--foreground)]">
+              {fmtInt(Math.abs(d[key] as number))}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
