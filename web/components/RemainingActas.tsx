@@ -46,7 +46,7 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
   // The magnitude is: (fuente_votos / total_remaining_votos) * net_fp
   const chartData = withData.map((r) => {
     const entry: Record<string, string | number> = {
-      region: r.region,
+      name: r.ambito === "EXTRANJERO" ? `${r.region} (Ext)` : r.region,
       ambito: r.ambito,
       net_fp: r.net_fp,
       remaining_votos: r.remaining_votos,
@@ -60,10 +60,9 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
     for (const key of FUENTE_KEYS) {
       const fuenteVotos = r.by_fuente[key] ?? 0;
       if (totalFuente > 0 && fuenteVotos > 0) {
-        // Each fuente's signed contribution = proportion of fuente × net_fp
-        entry[key] = Math.round((fuenteVotos / totalFuente) * r.net_fp);
+        entry[`f_${key}`] = Math.round((fuenteVotos / totalFuente) * r.net_fp);
       } else {
-        entry[key] = 0;
+        entry[`f_${key}`] = 0;
       }
     }
     return entry;
@@ -71,7 +70,7 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
 
   // Find which fuentes actually appear
   const activeFuentes = FUENTE_KEYS.filter((key) =>
-    chartData.some((d) => (d[key] as number) !== 0)
+    chartData.some((d) => (d[`f_${key}`] as number) !== 0)
   );
 
   const maxAbs = Math.max(...withData.map((r) => Math.abs(r.net_fp)));
@@ -110,11 +109,11 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
             />
             <YAxis
               type="category"
-              dataKey="region"
+              dataKey="name"
               tick={{ fill: "#a1a1aa", fontSize: 9 }}
               tickLine={false}
               axisLine={false}
-              width={90}
+              width={110}
               interval={0}
             />
             <ReferenceLine x={0} stroke="#52525b" strokeWidth={1} />
@@ -136,7 +135,7 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
             {activeFuentes.map((key) => (
               <Bar
                 key={key}
-                dataKey={key}
+                dataKey={`f_${key}`}
                 name={FUENTE_LABELS[key] ?? key}
                 stackId="a"
                 fill={FUENTE_COLORS[key]}
@@ -184,7 +183,7 @@ function CustomTooltip({
   return (
     <div className="space-y-2 rounded-lg border border-[var(--border-strong)] bg-[var(--surface)] p-3 text-xs shadow-lg">
       <p className="font-semibold text-[var(--foreground)]">
-        {d.region as string}{" "}
+        {d.name as string}{" "}
         <span className="font-normal text-[var(--muted-2)]">({d.ambito as string})</span>
       </p>
 
@@ -210,8 +209,8 @@ function CustomTooltip({
       </div>
 
       <div className="border-t border-[var(--border)] pt-2">
-        <p className="mb-1 text-[var(--muted)]">Votos restantes por fuente:</p>
-        {FUENTE_KEYS.filter((k) => (d[k] as number) !== 0).map((key) => (
+        <p className="mb-1 text-[var(--muted)]">Por fuente de proyección:</p>
+        {FUENTE_KEYS.filter((k) => (d[`f_${k}`] as number) !== 0).map((key) => (
           <div key={key} className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1.5">
               <span
@@ -221,7 +220,7 @@ function CustomTooltip({
               <span className="text-[var(--muted)]">{FUENTE_LABELS[key] ?? key}</span>
             </span>
             <span className="font-medium text-[var(--foreground)]">
-              {fmtInt(Math.abs(d[key] as number))}
+              {fmtInt(Math.abs(d[`f_${key}`] as number))}
             </span>
           </div>
         ))}
