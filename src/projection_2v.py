@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Proyección segunda vuelta presidencial - ONPE Perú 2026
-FP vs JP — uses first round results as similarity basis.
+FP vs JP — uses 2026 1ra vuelta vote-share vectors to find similar
+districts, then averages the actual 2v proportions of those neighbors
+that already have enough actas counted.
 """
 
 import os
@@ -20,6 +22,8 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 from snapshot_2v import save_2v_snapshot, load_snapshots  # noqa: E402
 
 THRESHOLD = 30.0
+SIM_K = 20  # number of similar districts to consider per fallback
+SIM_MIN_NEIGHBORS = 3  # minimum reliable neighbors required to use similarity
 
 
 def load_2v_data():
@@ -46,18 +50,102 @@ def load_1v_final():
     return df
 
 
-def build_1v_fp_share(df_1v):
-    """Build FP share per distrito from 1st round (for similarity fallback)."""
-    # FP share of (FP + JP) — relevant for 2nd round dynamics
-    fp = df_1v[df_1v["partido"] == "FUERZA POPULAR"].groupby("ubigeo_distrito")["votos"].sum()
-    jp = df_1v[df_1v["partido"] == "JUNTOS POR EL PERÚ"].groupby("ubigeo_distrito")["votos"].sum()
-    total = fp.add(jp, fill_value=0)
-    share = fp.div(total).fillna(0.5)
-    return share.to_dict()
+def build_1v_similarity_index(df_1v, k=SIM_K):
+    """
+    Build a similarity index from the 2026 1ra vuelta results.
+
+    For each distrito, compute its vote-share vector across all 1v
+    parties (excluding blancos/nulos), then return the top-K most
+    similar distritos by cosine similarity.
+
+    Returns:
+        sim_index: dict {ubigeo: [(neighbor_ubigeo, score), ...]}
+    """
+    special = {"VOTOS EN BLANCO", "VOTOS NULOS"}
+    df = df_1v[~df_1v["partido"].isin(special)].copy()
+
+    # Pivot to (ubigeo x partido) vote totals
+    pivot = df.pivot_table(
+        index="ubigeo_distrito",
+        columns="partido",
+        values="votos",
+        aggfunc="sum",
+        fill_value=0,
+    )
+    ubigeos = pivot.index.tolist()
+    vectors = pivot.values.astype(float)
+
+    # Normalize each row to a vote-share vector (rows summing to 1)
+    totals = vectors.sum(axis=1, keepdims=True)
+    totals = np.where(totals == 0, 1.0, totals)
+    shares = vectors / totals
+
+    # Cosine similarity
+    norms = np.linalg.norm(shares, axis=1, keepdims=True)
+    norms = np.where(norms == 0, 1.0, norms)
+    normalized = shares / norms
+    sim = normalized @ normalized.T
+    np.nan_to_num(sim, copy=False, nan=0.0, posinf=1.0, neginf=0.0)
+
+    # Top-K neighbors per distrito (excluding self)
+    sim_index = {}
+    for i, ub in enumerate(ubigeos):
+        scores = sim[i].copy()
+        scores[i] = -1.0
+        top = np.argpartition(-scores, k)[:k]
+        # sort that subset descending
+        top = top[np.argsort(-scores[top])]
+        sim_index[ub] = [(ubigeos[j], float(scores[j])) for j in top if scores[j] > 0]
+    return sim_index
 
 
-def project_2v(df_2v, fp_share_1v=None):
-    """Project 2nd round results using same methodology as 1st round."""
+def lookup_similarity_props(target_ubigeo, sim_index, district_props_2v, district_pcts_2v, threshold):
+    """
+    Average the actual 2v FP/JP proportions across the most similar
+    districts that already have enough 2v actas counted.
+
+    Args:
+        target_ubigeo: ubigeo we want to project
+        sim_index: precomputed similarity index from 1v 2026
+        district_props_2v: {ubigeo: {partido: prop}} for 2v districts
+        district_pcts_2v: {ubigeo: pct_actas} for 2v districts
+        threshold: minimum pct_actas to treat a neighbor as reliable
+
+    Returns:
+        ({"FUERZA POPULAR": x, "JUNTOS POR EL PERÚ": y}, n_used) or (None, 0)
+    """
+    if target_ubigeo not in sim_index:
+        return None, 0
+
+    weighted = defaultdict(float)
+    total_weight = 0.0
+    n_used = 0
+    for neighbor_ub, score in sim_index[target_ubigeo]:
+        if score <= 0:
+            continue
+        if district_pcts_2v.get(neighbor_ub, 0) < threshold:
+            continue
+        props = district_props_2v.get(neighbor_ub)
+        if not props:
+            continue
+        for partido, prop in props.items():
+            weighted[partido] += prop * score
+        total_weight += score
+        n_used += 1
+
+    if total_weight == 0 or n_used < SIM_MIN_NEIGHBORS:
+        return None, n_used
+
+    return {p: v / total_weight for p, v in weighted.items()}, n_used
+
+
+def project_2v(df_2v, sim_index=None):
+    """Project 2nd round results using similarity from 1ra vuelta 2026.
+
+    For low-actas districts, the cascade is:
+        similar districts (1v 2026 vectors, ≥3 reliable 2v neighbors)
+        → provincia → region → ambito → 50/50 default.
+    """
     geo = ["ambito", "region", "provincia", "distrito"]
 
     # Distrito-level actas
@@ -77,6 +165,16 @@ def project_2v(df_2v, fp_share_1v=None):
     # Identify candidates (exclude blancos/nulos)
     special = {"VOTOS EN BLANCO", "VOTOS NULOS"}
     candidates = [c for c in votos_d.columns if c not in geo + ["ubigeo_distrito"] and c not in special]
+
+    # Precompute actual 2v proportions per district (for similarity averaging)
+    district_props_2v = {}
+    district_pcts_2v = {}
+    for _, row in merged.iterrows():
+        ub = row["ubigeo_distrito"]
+        district_pcts_2v[ub] = row["pct_actas"]
+        total_valid = sum(row.get(c, 0) for c in candidates)
+        if total_valid > 0:
+            district_props_2v[ub] = {c: row.get(c, 0) / total_valid for c in candidates}
 
     # Geographic aggregations for fallback
     def compute_pct_and_props(df_sub, group_cols):
@@ -126,11 +224,17 @@ def project_2v(df_2v, fp_share_1v=None):
             r_row = actas_r[(actas_r["ambito"] == key_r[0]) & (actas_r["region"] == key_r[1])]
             a_row = actas_a[actas_a["ambito"] == key_a[0]]
 
-            if fp_share_1v and ub in fp_share_1v:
-                # Use 1st round FP/(FP+JP) share as fallback
-                fp_s = fp_share_1v[ub]
-                props = {"FUERZA POPULAR": fp_s, "JUNTOS POR EL PERÚ": 1 - fp_s}
-                source = "1v_similitud"
+            sim_props = None
+            if sim_index is not None:
+                sim_props, _ = lookup_similarity_props(
+                    ub, sim_index, district_props_2v, district_pcts_2v, THRESHOLD
+                )
+
+            if sim_props is not None:
+                # Average actual 2v proportions of similar districts
+                # (similarity from 2026 1ra vuelta vectors)
+                props = {c: sim_props.get(c, 0.0) for c in candidates}
+                source = "similitud"
             elif len(p_row) > 0 and p_row.iloc[0]["pct_actas"] >= THRESHOLD:
                 props = {c: p_row.iloc[0][f"prop_{c}"] for c in candidates}
                 source = "provincia"
@@ -163,12 +267,14 @@ def project_2v(df_2v, fp_share_1v=None):
         result_row = {
             "ambito": row["ambito"], "region": row["region"],
             "provincia": row["provincia"], "distrito": row["distrito"],
-            "ubigeo_distrito": ub, "total_actas": int(total_actas),
-            "actas_contabilizadas": int(actas_contab), "pct_actas": round(pct, 2),
+            "ubigeo_distrito": ub,
+            "total_actas": int(total_actas) if pd.notna(total_actas) else 0,
+            "actas_contabilizadas": int(actas_contab) if pd.notna(actas_contab) else 0,
+            "pct_actas": round(pct, 2) if pd.notna(pct) else 0.0,
             "fuente": source,
         }
         for c in candidates:
-            result_row[c] = round(estimated_total * props.get(c, 0))
+            result_row[c] = round(estimated_total * props.get(c, 0)) if pd.notna(estimated_total) else 0
         results.append(result_row)
 
     return pd.DataFrame(results)
@@ -180,11 +286,13 @@ def main():
         return
 
     df_1v = load_1v_final()
-    fp_share_1v = build_1v_fp_share(df_1v) if df_1v is not None else None
-    if fp_share_1v:
-        print(f"1v FP share loaded for {len(fp_share_1v)} districts")
+    sim_index = None
+    if df_1v is not None:
+        sim_index = build_1v_similarity_index(df_1v, k=SIM_K)
+        avg_neighbors = np.mean([len(v) for v in sim_index.values()])
+        print(f"1v similarity index built: {len(sim_index)} districts, avg {avg_neighbors:.1f} neighbors each")
 
-    proj = project_2v(df_2v, fp_share_1v)
+    proj = project_2v(df_2v, sim_index)
 
     # Results
     candidates = ["FUERZA POPULAR", "JUNTOS POR EL PERÚ"]
