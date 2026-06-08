@@ -85,13 +85,15 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
         Derecha (+ votos netos FP) · Izquierda (+ votos netos JP) · Coloreado por fuente de proyección
       </p>
 
-      <div className="mt-4" style={{ height: withData.length * 28 + 60 }}>
+      <div className="mt-4" style={{ height: withData.length * 22 + 60 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
             layout="vertical"
             margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
             stackOffset="sign"
+            barGap={0}
+            barCategoryGap="15%"
           >
             <CartesianGrid stroke="#27272a" horizontal={false} />
             <XAxis
@@ -109,10 +111,11 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
             <YAxis
               type="category"
               dataKey="region"
-              tick={{ fill: "#a1a1aa", fontSize: 10 }}
+              tick={{ fill: "#a1a1aa", fontSize: 9 }}
               tickLine={false}
               axisLine={false}
-              width={100}
+              width={90}
+              interval={0}
             />
             <ReferenceLine x={0} stroke="#52525b" strokeWidth={1} />
             <Tooltip
@@ -127,21 +130,18 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
               content={<CustomTooltip />}
             />
             <Legend
-              wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
-              formatter={(value: string) => (
-                <span className="text-[var(--muted)]">
-                  {FUENTE_LABELS[value] ?? value}
-                </span>
-              )}
+              wrapperStyle={{ fontSize: 11, paddingTop: 8, color: "#a1a1aa" }}
+              formatter={(value: string) => FUENTE_LABELS[value] ?? value}
             />
             {activeFuentes.map((key) => (
               <Bar
                 key={key}
                 dataKey={key}
+                name={FUENTE_LABELS[key] ?? key}
                 stackId="a"
                 fill={FUENTE_COLORS[key]}
                 radius={0}
-                maxBarSize={18}
+                maxBarSize={14}
               />
             ))}
           </BarChart>
