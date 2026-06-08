@@ -12,7 +12,7 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
         Actas restantes por región
       </h2>
       <p className="mt-1 text-xs text-[var(--muted-2)]">
-        Top 10 regiones con mayor cantidad de actas pendientes y a quién favorecen
+        Top 10 regiones con mayor cantidad de votos pendientes y a quién favorecen
       </p>
 
       <ul className="mt-4 divide-y divide-[var(--border)]">
@@ -25,9 +25,11 @@ export function RemainingActas({ rows }: { rows: RemainingRow[] }) {
             <div className="flex items-center gap-3 text-right">
               <div>
                 <p className="text-sm font-medium text-[var(--foreground)]">
-                  {fmtInt(r.remaining_actas)}
+                  {fmtInt(r.remaining_votos)}
                 </p>
-                <p className="text-xs text-[var(--muted-2)]">actas</p>
+                <p className="text-xs text-[var(--muted-2)]">
+                  votos esperados · {fmtInt(r.remaining_actas)} actas
+                </p>
               </div>
               <span
                 className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"

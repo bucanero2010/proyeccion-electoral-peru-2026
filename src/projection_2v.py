@@ -460,10 +460,11 @@ def save_summary_json(proj, df_2v, fp_total, jp_total, pct_actas, fp_win_prob, m
                     "region": region,
                     "ambito": ambito,
                     "remaining_actas": int(rem),
+                    "remaining_votos": int(tot_rem),
                     "fp_remaining_pct": round(sub_fp_rem / tot_rem * 100, 1) if tot_rem > 0 else 50,
                     "favors": "FP" if sub_fp_rem > sub_jp_rem else "JP",
                 })
-    remaining_by_region.sort(key=lambda x: -x["remaining_actas"])
+    remaining_by_region.sort(key=lambda x: -x["remaining_votos"])
 
     summary = {
         "timestamp": datetime.now().isoformat(),
