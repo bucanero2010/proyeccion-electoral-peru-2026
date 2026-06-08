@@ -21,8 +21,12 @@ export type RemainingRow = {
   ambito: string;
   remaining_actas: number;
   remaining_votos: number;
+  fp_remaining_votos: number;
+  jp_remaining_votos: number;
+  net_fp: number;
   fp_remaining_pct: number;
   favors: "FP" | "JP";
+  by_fuente: Record<string, number>;
 };
 
 export type HistoryRow = {

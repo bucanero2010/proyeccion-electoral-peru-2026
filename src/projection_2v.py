@@ -438,33 +438,58 @@ def save_summary_json(proj, df_2v, fp_total, jp_total, pct_actas, fp_win_prob, m
     save_2v_snapshot(pct_actas, actual_fp, actual_jp, fp_total, jp_total, fp_win_prob, margin_stats)
     snapshot_history = load_snapshots()
 
-    # Remaining actas by region
+    # Remaining actas by region — with per-fuente breakdown
     proj_with_remaining = proj.copy()
     proj_with_remaining["remaining"] = proj_with_remaining["total_actas"] - proj_with_remaining["actas_contabilizadas"]
+
+    # Precompute actual counted votes per district for FP and JP
+    actual_by_dist = df_2v[df_2v["partido"].isin(candidates)].pivot_table(
+        index=["ambito", "region", "provincia", "distrito"],
+        columns="partido", values="votos", aggfunc="sum", fill_value=0
+    ).reindex(columns=candidates, fill_value=0)
+
+    # Join actuals into proj for fast subtraction
+    proj_with_remaining = proj_with_remaining.merge(
+        actual_by_dist.reset_index().rename(columns={c: f"actual_{c}" for c in candidates}),
+        on=["ambito", "region", "provincia", "distrito"],
+        how="left"
+    )
+    for c in candidates:
+        proj_with_remaining[f"remaining_{c}"] = (
+            proj_with_remaining[c] - proj_with_remaining[f"actual_{c}"].fillna(0)
+        ).clip(lower=0)
+
     remaining_by_region = []
     for (ambito, region), grp in proj_with_remaining.groupby(["ambito", "region"]):
-        rem = grp["remaining"].sum()
-        if rem > 0:
-            # Estimate which side benefits (use proj proportions for remaining districts)
-            sub_fp_rem = (grp["FUERZA POPULAR"] - grp.apply(
-                lambda r: df_2v[(df_2v["ambito"] == r["ambito"]) & (df_2v["region"] == r["region"]) &
-                                (df_2v["provincia"] == r["provincia"]) & (df_2v["distrito"] == r["distrito"]) &
-                                (df_2v["partido"] == "FUERZA POPULAR")]["votos"].sum(), axis=1)).sum()
-            sub_jp_rem = (grp["JUNTOS POR EL PERÚ"] - grp.apply(
-                lambda r: df_2v[(df_2v["ambito"] == r["ambito"]) & (df_2v["region"] == r["region"]) &
-                                (df_2v["provincia"] == r["provincia"]) & (df_2v["distrito"] == r["distrito"]) &
-                                (df_2v["partido"] == "JUNTOS POR EL PERÚ")]["votos"].sum(), axis=1)).sum()
-            tot_rem = sub_fp_rem + sub_jp_rem
-            if tot_rem > 0:
-                remaining_by_region.append({
-                    "region": region,
-                    "ambito": ambito,
-                    "remaining_actas": int(rem),
-                    "remaining_votos": int(tot_rem),
-                    "fp_remaining_pct": round(sub_fp_rem / tot_rem * 100, 1) if tot_rem > 0 else 50,
-                    "favors": "FP" if sub_fp_rem > sub_jp_rem else "JP",
-                })
-    remaining_by_region.sort(key=lambda x: -x["remaining_votos"])
+        sub_fp_rem = grp["remaining_FUERZA POPULAR"].sum()
+        sub_jp_rem = grp["remaining_JUNTOS POR EL PERÚ"].sum()
+        tot_rem = sub_fp_rem + sub_jp_rem
+        rem_actas = grp["remaining"].sum()
+
+        # Per-fuente breakdown of remaining votes in this region
+        fuente_breakdown = {}
+        for fuente, fgrp in grp[grp["remaining"] > 0].groupby("fuente"):
+            f_fp = fgrp["remaining_FUERZA POPULAR"].sum()
+            f_jp = fgrp["remaining_JUNTOS POR EL PERÚ"].sum()
+            fuente_breakdown[fuente] = int(f_fp + f_jp)
+
+        # Net contribution: positive = helps FP, negative = helps JP
+        net_fp = sub_fp_rem - sub_jp_rem
+
+        remaining_by_region.append({
+            "region": region,
+            "ambito": ambito,
+            "remaining_actas": int(rem_actas),
+            "remaining_votos": int(tot_rem),
+            "fp_remaining_votos": int(sub_fp_rem),
+            "jp_remaining_votos": int(sub_jp_rem),
+            "net_fp": int(net_fp),
+            "fp_remaining_pct": round(sub_fp_rem / tot_rem * 100, 1) if tot_rem > 0 else 50,
+            "favors": "FP" if net_fp > 0 else "JP",
+            "by_fuente": fuente_breakdown,
+        })
+    # Sort by net FP contribution: most FP-favorable first, most JP-favorable last
+    remaining_by_region.sort(key=lambda x: -x["net_fp"])
 
     summary = {
         "timestamp": datetime.now().isoformat(),
@@ -489,7 +514,7 @@ def save_summary_json(proj, df_2v, fp_total, jp_total, pct_actas, fp_win_prob, m
             "p95": margin_stats["p95"],
         },
         "regions": region_data,
-        "remaining_by_region": remaining_by_region[:10],
+        "remaining_by_region": remaining_by_region,
         "fuente_breakdown": proj["fuente"].value_counts().to_dict(),
         "history": snapshot_history,
     }
