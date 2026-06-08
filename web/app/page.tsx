@@ -26,8 +26,8 @@ export default function Home() {
         <Methodology fuentes={summary.fuente_breakdown} />
       </main>
 
-      <footer className="border-t border-zinc-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-4 text-xs text-zinc-500 sm:px-6">
+      <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
+        <div className="mx-auto max-w-5xl px-4 py-4 text-xs text-[var(--muted-2)] sm:px-6">
           Datos: ONPE · Proyección: modelo propio (similitud + Monte Carlo) ·
           Resultado oficial pendiente al cierre del cómputo.
         </div>

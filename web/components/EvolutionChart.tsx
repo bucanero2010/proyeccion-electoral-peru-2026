@@ -15,11 +15,11 @@ import { FP_COLOR, JP_COLOR, type HistoryRow } from "@/lib/types";
 export function EvolutionChart({ history }: { history: HistoryRow[] }) {
   if (!history || history.length === 0) {
     return (
-      <section className="rounded-xl border border-zinc-200 bg-white p-5">
-        <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+        <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--muted)]">
           Evolución de la proyección
         </h2>
-        <p className="mt-3 text-sm text-zinc-500">
+        <p className="mt-3 text-sm text-[var(--muted-2)]">
           Aún no hay snapshots históricos. Se generarán a medida que se ejecute el scraper.
         </p>
       </section>
@@ -35,47 +35,51 @@ export function EvolutionChart({ history }: { history: HistoryRow[] }) {
   }));
 
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white p-5">
+    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
       <div className="flex items-baseline justify-between gap-4">
         <div>
-          <h2 className="text-sm font-medium uppercase tracking-wider text-zinc-500">
+          <h2 className="text-sm font-medium uppercase tracking-wider text-[var(--muted)]">
             Evolución de la proyección
           </h2>
-          <p className="mt-1 text-xs text-zinc-500">% proyectado por candidato a lo largo del conteo</p>
+          <p className="mt-1 text-xs text-[var(--muted-2)]">
+            % proyectado por candidato a lo largo del conteo
+          </p>
         </div>
-        <span className="text-xs text-zinc-400">{history.length} snapshots</span>
+        <span className="text-xs text-[var(--muted-2)]">{history.length} snapshots</span>
       </div>
 
       <div className="mt-4 h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 12, left: -16, bottom: 0 }}>
-            <CartesianGrid stroke="#f1f5f9" vertical={false} />
+            <CartesianGrid stroke="#27272a" vertical={false} />
             <XAxis
               dataKey="label"
-              tick={{ fill: "#71717a", fontSize: 11 }}
+              tick={{ fill: "#a1a1aa", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#e4e4e7" }}
+              axisLine={{ stroke: "#3f3f46" }}
             />
             <YAxis
-              tick={{ fill: "#71717a", fontSize: 11 }}
+              tick={{ fill: "#a1a1aa", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "#e4e4e7" }}
+              axisLine={{ stroke: "#3f3f46" }}
               domain={[40, 60]}
               tickFormatter={(v) => `${v}%`}
             />
             <Tooltip
               contentStyle={{
-                background: "white",
-                border: "1px solid #e4e4e7",
+                background: "#18181b",
+                border: "1px solid #3f3f46",
                 borderRadius: 6,
                 fontSize: 12,
+                color: "#fafafa",
               }}
+              labelStyle={{ color: "#a1a1aa" }}
               formatter={(value) => {
                 const n = typeof value === "number" ? value : Number(value);
                 return Number.isFinite(n) ? `${n.toFixed(2)}%` : "—";
               }}
             />
-            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8, color: "#a1a1aa" }} />
             <Line
               type="monotone"
               dataKey="fp"

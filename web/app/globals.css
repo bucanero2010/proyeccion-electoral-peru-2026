@@ -1,14 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafafa;
-  --foreground: #18181b;
-  --fp: #f97316;
-  --jp: #22c55e;
+  /* Dark theme — fixed (no light variant for now). */
+  --background: #09090b;
+  --surface: #18181b;
+  --surface-2: #27272a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --muted-2: #71717a;
+  --fp: #fb923c;
+  --fp-strong: #f97316;
+  --jp: #4ade80;
+  --jp-strong: #22c55e;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-fp: var(--fp);
   --color-jp: var(--jp);
@@ -16,7 +26,17 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html,
 body {
   background: var(--background);
   color: var(--foreground);
+  color-scheme: dark;
+}
+
+/* Make collapsible details show a chevron we can rotate. */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
 }
