@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-09T10:19:57.102619",
+  "timestamp": "2026-06-09T10:32:05.005676",
   "pct_actas": 95.61,
   "fp": {
     "votos_actuales": 8869814,
@@ -1589,6 +1589,17 @@
     },
     {
       "timestamp": "2026-06-09 10:19:57",
+      "pct_actas": 95.61,
+      "fp_pct_actual": 49.917,
+      "jp_pct_actual": 50.083,
+      "fp_pct_proyectado": 50.159,
+      "jp_pct_proyectado": 49.841,
+      "fp_win_prob": 88.0,
+      "jp_win_prob": 12.0,
+      "margin_mean": 0.158
+    },
+    {
+      "timestamp": "2026-06-09 10:32:04",
       "pct_actas": 95.61,
       "fp_pct_actual": 49.917,
       "jp_pct_actual": 50.083,
