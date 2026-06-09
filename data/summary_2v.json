@@ -1,34 +1,34 @@
 {
-  "timestamp": "2026-06-09T03:06:31.317934",
-  "pct_actas": 95.04,
+  "timestamp": "2026-06-09T03:18:55.949845",
+  "pct_actas": 95.05,
   "fp": {
-    "votos_actuales": 8832786,
-    "votos_proyectados": 9271908,
+    "votos_actuales": 8833248,
+    "votos_proyectados": 9272146,
     "pct_actual": 49.88,
     "pct_proyectado": 50.17,
-    "win_probability": 87.9
+    "win_probability": 88.03
   },
   "jp": {
-    "votos_actuales": 8874898,
-    "votos_proyectados": 9209592,
+    "votos_actuales": 8875353,
+    "votos_proyectados": 9209581,
     "pct_actual": 50.12,
     "pct_proyectado": 49.83,
-    "win_probability": 12.1
+    "win_probability": 11.97
   },
   "margin": {
-    "mean": 0.17,
-    "p5": -0.067,
-    "p95": 0.389
+    "mean": 0.171,
+    "p5": -0.066,
+    "p95": 0.39
   },
   "regions": [
     {
       "ambito": "PERÚ",
       "region": "LIMA",
-      "fp_votos": 4072944,
-      "jp_votos": 2340058,
+      "fp_votos": 4072935,
+      "jp_votos": 2340067,
       "fp_pct": 63.51,
       "jp_pct": 36.49,
-      "pct_actas": 98.4
+      "pct_actas": 98.5
     },
     {
       "ambito": "PERÚ",
@@ -87,10 +87,10 @@
     {
       "ambito": "PERÚ",
       "region": "JUNÍN",
-      "fp_votos": 322860,
-      "jp_votos": 395721,
-      "fp_pct": 44.93,
-      "jp_pct": 55.07,
+      "fp_votos": 323110,
+      "jp_votos": 395613,
+      "fp_pct": 44.96,
+      "jp_pct": 55.04,
       "pct_actas": 98.2
     },
     {
@@ -213,10 +213,10 @@
     {
       "ambito": "PERÚ",
       "region": "AMAZONAS",
-      "fp_votos": 69351,
-      "jp_votos": 125823,
-      "fp_pct": 35.53,
-      "jp_pct": 64.47,
+      "fp_votos": 69348,
+      "jp_votos": 125911,
+      "fp_pct": 35.52,
+      "jp_pct": 64.48,
       "pct_actas": 98.8
     },
     {
@@ -293,15 +293,15 @@
     {
       "region": "LIMA",
       "ambito": "PERÚ",
-      "remaining_actas": 919,
-      "remaining_votos": 202228,
-      "fp_remaining_votos": 129204,
-      "jp_remaining_votos": 73024,
-      "net_fp": 56180,
+      "remaining_actas": 917,
+      "remaining_votos": 201776,
+      "fp_remaining_votos": 128958,
+      "jp_remaining_votos": 72818,
+      "net_fp": 56140,
       "fp_remaining_pct": 63.9,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 202228
+        "distrito": 201776
       }
     },
     {
@@ -634,15 +634,30 @@
     {
       "region": "AMAZONAS",
       "ambito": "PERÚ",
-      "remaining_actas": 28,
-      "remaining_votos": 2974,
-      "fp_remaining_votos": 383,
-      "jp_remaining_votos": 2591,
-      "net_fp": -2208,
-      "fp_remaining_pct": 12.9,
+      "remaining_actas": 27,
+      "remaining_votos": 2865,
+      "fp_remaining_votos": 380,
+      "jp_remaining_votos": 2485,
+      "net_fp": -2105,
+      "fp_remaining_pct": 13.3,
       "favors": "JP",
       "by_fuente": {
-        "distrito": 2974
+        "distrito": 2865
+      }
+    },
+    {
+      "region": "JUNÍN",
+      "ambito": "PERÚ",
+      "remaining_actas": 89,
+      "remaining_votos": 13698,
+      "fp_remaining_votos": 5140,
+      "jp_remaining_votos": 8558,
+      "net_fp": -3418,
+      "fp_remaining_pct": 37.5,
+      "favors": "JP",
+      "by_fuente": {
+        "distrito": 10978,
+        "similitud": 2720
       }
     },
     {
@@ -657,21 +672,6 @@
       "favors": "JP",
       "by_fuente": {
         "distrito": 5302
-      }
-    },
-    {
-      "region": "JUNÍN",
-      "ambito": "PERÚ",
-      "remaining_actas": 91,
-      "remaining_votos": 13827,
-      "fp_remaining_votos": 5115,
-      "jp_remaining_votos": 8712,
-      "net_fp": -3597,
-      "fp_remaining_pct": 37.0,
-      "favors": "JP",
-      "by_fuente": {
-        "distrito": 11106,
-        "similitud": 2721
       }
     },
     {
@@ -1205,6 +1205,17 @@
       "fp_win_prob": 87.9,
       "jp_win_prob": 12.1,
       "margin_mean": 0.17
+    },
+    {
+      "timestamp": "2026-06-09 03:18:55",
+      "pct_actas": 95.05,
+      "fp_pct_actual": 49.881,
+      "jp_pct_actual": 50.119,
+      "fp_pct_proyectado": 50.169,
+      "jp_pct_proyectado": 49.831,
+      "fp_win_prob": 88.03,
+      "jp_win_prob": 11.97,
+      "margin_mean": 0.171
     }
   ]
 }
