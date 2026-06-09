@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-09T11:21:10.174636",
-  "pct_actas": 95.68,
+  "timestamp": "2026-06-09T11:33:20.634494",
+  "pct_actas": 95.69,
   "fp": {
-    "votos_actuales": 8874330,
-    "votos_proyectados": 9243385,
-    "pct_actual": 49.92,
+    "votos_actuales": 8874683,
+    "votos_proyectados": 9243200,
+    "pct_actual": 49.93,
     "pct_proyectado": 50.15,
-    "win_probability": 88.7
+    "win_probability": 88.03
   },
   "jp": {
-    "votos_actuales": 8901140,
-    "votos_proyectados": 9189037,
-    "pct_actual": 50.08,
+    "votos_actuales": 8901181,
+    "votos_proyectados": 9188938,
+    "pct_actual": 50.07,
     "pct_proyectado": 49.85,
-    "win_probability": 11.3
+    "win_probability": 11.97
   },
   "margin": {
-    "mean": 0.15,
-    "p5": -0.049,
-    "p95": 0.34
+    "mean": 0.147,
+    "p5": -0.055,
+    "p95": 0.338
   },
   "regions": [
     {
@@ -195,8 +195,8 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 136197,
-      "jp_votos": 66539,
+      "fp_votos": 136012,
+      "jp_votos": 66440,
       "fp_pct": 67.18,
       "jp_pct": 32.82,
       "pct_actas": 54.9
@@ -301,16 +301,16 @@
     {
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 1125,
-      "remaining_votos": 147838,
-      "fp_remaining_votos": 98810,
-      "jp_remaining_votos": 49028,
-      "net_fp": 49782,
+      "remaining_actas": 1121,
+      "remaining_votos": 147160,
+      "fp_remaining_votos": 98272,
+      "jp_remaining_votos": 48888,
+      "net_fp": 49384,
       "fp_remaining_pct": 66.8,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 3194,
-        "similitud": 144644
+        "distrito": 2809,
+        "similitud": 144351
       }
     },
     {
@@ -1652,6 +1652,17 @@
       "fp_win_prob": 88.7,
       "jp_win_prob": 11.3,
       "margin_mean": 0.15
+    },
+    {
+      "timestamp": "2026-06-09 11:33:20",
+      "pct_actas": 95.69,
+      "fp_pct_actual": 49.925,
+      "jp_pct_actual": 50.075,
+      "fp_pct_proyectado": 50.147,
+      "jp_pct_proyectado": 49.853,
+      "fp_win_prob": 88.03,
+      "jp_win_prob": 11.97,
+      "margin_mean": 0.147
     }
   ]
 }
