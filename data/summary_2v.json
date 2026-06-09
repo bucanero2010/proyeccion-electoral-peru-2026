@@ -1,23 +1,23 @@
 {
-  "timestamp": "2026-06-09T12:34:14.593670",
-  "pct_actas": 95.69,
+  "timestamp": "2026-06-09T12:47:24.130672",
+  "pct_actas": 95.71,
   "fp": {
     "votos_actuales": 8874683,
-    "votos_proyectados": 9243200,
+    "votos_proyectados": 9241330,
     "pct_actual": 49.93,
-    "pct_proyectado": 50.15,
-    "win_probability": 88.03
+    "pct_proyectado": 50.14,
+    "win_probability": 87.77
   },
   "jp": {
     "votos_actuales": 8901181,
-    "votos_proyectados": 9188938,
+    "votos_proyectados": 9188182,
     "pct_actual": 50.07,
-    "pct_proyectado": 49.85,
-    "win_probability": 11.97
+    "pct_proyectado": 49.86,
+    "win_probability": 12.23
   },
   "margin": {
-    "mean": 0.147,
-    "p5": -0.055,
+    "mean": 0.141,
+    "p5": -0.056,
     "p95": 0.338
   },
   "regions": [
@@ -249,10 +249,10 @@
     {
       "ambito": "EXTRANJERO",
       "region": "EUROPA",
-      "fp_votos": 69524,
-      "jp_votos": 46029,
-      "fp_pct": 60.17,
-      "jp_pct": 39.83,
+      "fp_votos": 67654,
+      "jp_votos": 45273,
+      "fp_pct": 59.91,
+      "jp_pct": 40.09,
       "pct_actas": 15.4
     },
     {
@@ -316,17 +316,17 @@
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 778,
-      "remaining_votos": 107527,
-      "fp_remaining_votos": 65257,
-      "jp_remaining_votos": 42270,
-      "net_fp": 22987,
-      "fp_remaining_pct": 60.7,
+      "remaining_actas": 759,
+      "remaining_votos": 104901,
+      "fp_remaining_votos": 63387,
+      "jp_remaining_votos": 41514,
+      "net_fp": 21873,
+      "fp_remaining_pct": 60.4,
       "favors": "FP",
       "by_fuente": {
         "default": 138,
         "distrito": 1067,
-        "similitud": 106322
+        "similitud": 103696
       }
     },
     {
@@ -713,8 +713,8 @@
     }
   ],
   "fuente_breakdown": {
-    "distrito": 1941,
-    "similitud": 153,
+    "distrito": 1943,
+    "similitud": 151,
     "default": 8
   },
   "history": [
@@ -1718,6 +1718,17 @@
       "fp_win_prob": 88.03,
       "jp_win_prob": 11.97,
       "margin_mean": 0.147
+    },
+    {
+      "timestamp": "2026-06-09 12:47:24",
+      "pct_actas": 95.71,
+      "fp_pct_actual": 49.925,
+      "jp_pct_actual": 50.075,
+      "fp_pct_proyectado": 50.144,
+      "jp_pct_proyectado": 49.856,
+      "fp_win_prob": 87.77,
+      "jp_win_prob": 12.23,
+      "margin_mean": 0.141
     }
   ]
 }
