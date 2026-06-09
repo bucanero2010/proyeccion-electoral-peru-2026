@@ -1,23 +1,23 @@
 {
-  "timestamp": "2026-06-09T02:54:05.183245",
-  "pct_actas": 95.02,
+  "timestamp": "2026-06-09T03:06:31.317934",
+  "pct_actas": 95.04,
   "fp": {
-    "votos_actuales": 8832661,
-    "votos_proyectados": 9271987,
+    "votos_actuales": 8832786,
+    "votos_proyectados": 9271908,
     "pct_actual": 49.88,
-    "pct_proyectado": 50.16,
-    "win_probability": 87.53
+    "pct_proyectado": 50.17,
+    "win_probability": 87.9
   },
   "jp": {
-    "votos_actuales": 8873964,
-    "votos_proyectados": 9211287,
+    "votos_actuales": 8874898,
+    "votos_proyectados": 9209592,
     "pct_actual": 50.12,
-    "pct_proyectado": 49.84,
-    "win_probability": 12.47
+    "pct_proyectado": 49.83,
+    "win_probability": 12.1
   },
   "margin": {
-    "mean": 0.16,
-    "p5": -0.073,
+    "mean": 0.17,
+    "p5": -0.067,
     "p95": 0.389
   },
   "regions": [
@@ -160,10 +160,10 @@
       "ambito": "PERÚ",
       "region": "AYACUCHO",
       "fp_votos": 67537,
-      "jp_votos": 258779,
-      "fp_pct": 20.7,
-      "jp_pct": 79.3,
-      "pct_actas": 98.9
+      "jp_votos": 258533,
+      "fp_pct": 20.71,
+      "jp_pct": 79.29,
+      "pct_actas": 99.5
     },
     {
       "ambito": "PERÚ",
@@ -213,11 +213,11 @@
     {
       "ambito": "PERÚ",
       "region": "AMAZONAS",
-      "fp_votos": 69430,
-      "jp_votos": 127272,
-      "fp_pct": 35.3,
-      "jp_pct": 64.7,
-      "pct_actas": 98.5
+      "fp_votos": 69351,
+      "jp_votos": 125823,
+      "fp_pct": 35.53,
+      "jp_pct": 64.47,
+      "pct_actas": 98.8
     },
     {
       "ambito": "PERÚ",
@@ -589,6 +589,20 @@
       }
     },
     {
+      "region": "AYACUCHO",
+      "ambito": "PERÚ",
+      "remaining_actas": 16,
+      "remaining_votos": 2972,
+      "fp_remaining_votos": 702,
+      "jp_remaining_votos": 2270,
+      "net_fp": -1568,
+      "fp_remaining_pct": 23.6,
+      "favors": "JP",
+      "by_fuente": {
+        "distrito": 2972
+      }
+    },
+    {
       "region": "CAJAMARCA",
       "ambito": "PERÚ",
       "remaining_actas": 30,
@@ -618,17 +632,17 @@
       }
     },
     {
-      "region": "AYACUCHO",
+      "region": "AMAZONAS",
       "ambito": "PERÚ",
-      "remaining_actas": 24,
-      "remaining_votos": 4277,
-      "fp_remaining_votos": 827,
-      "jp_remaining_votos": 3450,
-      "net_fp": -2623,
-      "fp_remaining_pct": 19.3,
+      "remaining_actas": 28,
+      "remaining_votos": 2974,
+      "fp_remaining_votos": 383,
+      "jp_remaining_votos": 2591,
+      "net_fp": -2208,
+      "fp_remaining_pct": 12.9,
       "favors": "JP",
       "by_fuente": {
-        "distrito": 4277
+        "distrito": 2974
       }
     },
     {
@@ -643,20 +657,6 @@
       "favors": "JP",
       "by_fuente": {
         "distrito": 5302
-      }
-    },
-    {
-      "region": "AMAZONAS",
-      "ambito": "PERÚ",
-      "remaining_actas": 38,
-      "remaining_votos": 4502,
-      "fp_remaining_votos": 462,
-      "jp_remaining_votos": 4040,
-      "net_fp": -3578,
-      "fp_remaining_pct": 10.3,
-      "favors": "JP",
-      "by_fuente": {
-        "distrito": 4502
       }
     },
     {
@@ -1194,6 +1194,17 @@
       "fp_win_prob": 87.53,
       "jp_win_prob": 12.47,
       "margin_mean": 0.16
+    },
+    {
+      "timestamp": "2026-06-09 03:06:31",
+      "pct_actas": 95.04,
+      "fp_pct_actual": 49.881,
+      "jp_pct_actual": 50.119,
+      "fp_pct_proyectado": 50.169,
+      "jp_pct_proyectado": 49.831,
+      "fp_win_prob": 87.9,
+      "jp_win_prob": 12.1,
+      "margin_mean": 0.17
     }
   ]
 }
