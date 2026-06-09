@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-09T04:08:26.383462",
-  "pct_actas": 95.14,
+  "timestamp": "2026-06-09T04:20:50.474961",
+  "pct_actas": 95.15,
   "fp": {
-    "votos_actuales": 8838213,
-    "votos_proyectados": 9269068,
+    "votos_actuales": 8839043,
+    "votos_proyectados": 9268123,
     "pct_actual": 49.88,
     "pct_proyectado": 50.17,
-    "win_probability": 87.93
+    "win_probability": 87.87
   },
   "jp": {
-    "votos_actuales": 8880924,
-    "votos_proyectados": 9207263,
+    "votos_actuales": 8881344,
+    "votos_proyectados": 9206140,
     "pct_actual": 50.12,
     "pct_proyectado": 49.83,
-    "win_probability": 12.07
+    "win_probability": 12.13
   },
   "margin": {
-    "mean": 0.166,
-    "p5": -0.071,
-    "p95": 0.391
+    "mean": 0.165,
+    "p5": -0.068,
+    "p95": 0.381
   },
   "regions": [
     {
@@ -87,10 +87,10 @@
     {
       "ambito": "PERÚ",
       "region": "JUNÍN",
-      "fp_votos": 323706,
-      "jp_votos": 395316,
-      "fp_pct": 45.02,
-      "jp_pct": 54.98,
+      "fp_votos": 323587,
+      "jp_votos": 394960,
+      "fp_pct": 45.03,
+      "jp_pct": 54.97,
       "pct_actas": 99.1
     },
     {
@@ -177,10 +177,10 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 155886,
-      "jp_votos": 79062,
-      "fp_pct": 66.35,
-      "jp_pct": 33.65,
+      "fp_votos": 155986,
+      "jp_votos": 78966,
+      "fp_pct": 66.39,
+      "jp_pct": 33.61,
       "pct_actas": 20.8
     },
     {
@@ -249,11 +249,11 @@
     {
       "ambito": "EXTRANJERO",
       "region": "EUROPA",
-      "fp_votos": 70386,
-      "jp_votos": 46763,
-      "fp_pct": 60.08,
-      "jp_pct": 39.92,
-      "pct_actas": 14.8
+      "fp_votos": 69460,
+      "jp_votos": 46092,
+      "fp_pct": 60.11,
+      "jp_pct": 39.89,
+      "pct_actas": 15.4
     },
     {
       "ambito": "PERÚ",
@@ -279,15 +279,15 @@
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
       "remaining_actas": 1429,
-      "remaining_votos": 215453,
-      "fp_remaining_votos": 144727,
-      "jp_remaining_votos": 70726,
-      "net_fp": 74001,
+      "remaining_votos": 215457,
+      "fp_remaining_votos": 144827,
+      "jp_remaining_votos": 70630,
+      "net_fp": 74197,
       "fp_remaining_pct": 67.2,
       "favors": "FP",
       "by_fuente": {
         "distrito": 878,
-        "similitud": 214575
+        "similitud": 214579
       }
     },
     {
@@ -307,17 +307,17 @@
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 785,
-      "remaining_votos": 109931,
-      "fp_remaining_votos": 66674,
-      "jp_remaining_votos": 43257,
-      "net_fp": 23417,
-      "fp_remaining_pct": 60.7,
+      "remaining_actas": 778,
+      "remaining_votos": 107526,
+      "fp_remaining_votos": 65193,
+      "jp_remaining_votos": 42333,
+      "net_fp": 22860,
+      "fp_remaining_pct": 60.6,
       "favors": "FP",
       "by_fuente": {
-        "default": 140,
-        "distrito": 1886,
-        "similitud": 107905
+        "default": 138,
+        "distrito": 1067,
+        "similitud": 106321
       }
     },
     {
@@ -507,15 +507,15 @@
     {
       "region": "JUNÍN",
       "ambito": "PERÚ",
-      "remaining_actas": 61,
-      "remaining_votos": 9549,
-      "fp_remaining_votos": 4277,
-      "jp_remaining_votos": 5272,
-      "net_fp": -995,
-      "fp_remaining_pct": 44.8,
+      "remaining_actas": 54,
+      "remaining_votos": 8632,
+      "fp_remaining_votos": 3883,
+      "jp_remaining_votos": 4749,
+      "net_fp": -866,
+      "fp_remaining_pct": 45.0,
       "favors": "JP",
       "by_fuente": {
-        "distrito": 9549
+        "distrito": 8632
       }
     },
     {
@@ -1259,6 +1259,17 @@
       "fp_win_prob": 87.93,
       "jp_win_prob": 12.07,
       "margin_mean": 0.166
+    },
+    {
+      "timestamp": "2026-06-09 04:20:50",
+      "pct_actas": 95.15,
+      "fp_pct_actual": 49.881,
+      "jp_pct_actual": 50.119,
+      "fp_pct_proyectado": 50.168,
+      "jp_pct_proyectado": 49.832,
+      "fp_win_prob": 87.87,
+      "jp_win_prob": 12.13,
+      "margin_mean": 0.165
     }
   ]
 }
