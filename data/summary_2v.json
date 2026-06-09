@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-09T10:44:24.195669",
-  "pct_actas": 95.64,
+  "timestamp": "2026-06-09T10:56:34.998889",
+  "pct_actas": 95.68,
   "fp": {
-    "votos_actuales": 8871593,
-    "votos_proyectados": 9245836,
+    "votos_actuales": 8874330,
+    "votos_proyectados": 9243967,
     "pct_actual": 49.92,
     "pct_proyectado": 50.15,
-    "win_probability": 88.17
+    "win_probability": 88.27
   },
   "jp": {
-    "votos_actuales": 8900135,
-    "votos_proyectados": 9190597,
+    "votos_actuales": 8901140,
+    "votos_proyectados": 9189310,
     "pct_actual": 50.08,
     "pct_proyectado": 49.85,
-    "win_probability": 11.83
+    "win_probability": 11.73
   },
   "margin": {
-    "mean": 0.149,
-    "p5": -0.055,
-    "p95": 0.346
+    "mean": 0.15,
+    "p5": -0.057,
+    "p95": 0.339
   },
   "regions": [
     {
@@ -195,11 +195,11 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 138652,
-      "jp_votos": 68096,
-      "fp_pct": 67.06,
-      "jp_pct": 32.94,
-      "pct_actas": 54.3
+      "fp_votos": 136779,
+      "jp_votos": 66812,
+      "fp_pct": 67.18,
+      "jp_pct": 32.82,
+      "pct_actas": 54.9
     },
     {
       "ambito": "PERÚ",
@@ -249,10 +249,10 @@
     {
       "ambito": "EXTRANJERO",
       "region": "EUROPA",
-      "fp_votos": 69520,
-      "jp_votos": 46032,
-      "fp_pct": 60.16,
-      "jp_pct": 39.84,
+      "fp_votos": 69524,
+      "jp_votos": 46029,
+      "fp_pct": 60.17,
+      "jp_pct": 39.83,
       "pct_actas": 15.4
     },
     {
@@ -301,32 +301,32 @@
     {
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 1166,
-      "remaining_votos": 155592,
-      "fp_remaining_votos": 104002,
-      "jp_remaining_votos": 51590,
-      "net_fp": 52412,
+      "remaining_actas": 1127,
+      "remaining_votos": 148693,
+      "fp_remaining_votos": 99392,
+      "jp_remaining_votos": 49301,
+      "net_fp": 50091,
       "fp_remaining_pct": 66.8,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 6886,
-        "similitud": 148706
+        "distrito": 3397,
+        "similitud": 145296
       }
     },
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
       "remaining_actas": 778,
-      "remaining_votos": 107526,
-      "fp_remaining_votos": 65253,
-      "jp_remaining_votos": 42273,
-      "net_fp": 22980,
+      "remaining_votos": 107527,
+      "fp_remaining_votos": 65257,
+      "jp_remaining_votos": 42270,
+      "net_fp": 22987,
       "fp_remaining_pct": 60.7,
       "favors": "FP",
       "by_fuente": {
         "default": 138,
         "distrito": 1067,
-        "similitud": 106321
+        "similitud": 106322
       }
     },
     {
@@ -1619,6 +1619,17 @@
       "fp_win_prob": 88.17,
       "jp_win_prob": 11.83,
       "margin_mean": 0.149
+    },
+    {
+      "timestamp": "2026-06-09 10:56:34",
+      "pct_actas": 95.68,
+      "fp_pct_actual": 49.925,
+      "jp_pct_actual": 50.075,
+      "fp_pct_proyectado": 50.148,
+      "jp_pct_proyectado": 49.852,
+      "fp_win_prob": 88.27,
+      "jp_win_prob": 11.73,
+      "margin_mean": 0.15
     }
   ]
 }
