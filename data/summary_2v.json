@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-06-10T18:12:32.859365",
+  "timestamp": "2026-06-10T18:24:41.241452",
   "pct_actas": 97.81,
   "fp": {
-    "votos_actuales": 9006405,
-    "votos_proyectados": 9223554,
+    "votos_actuales": 9006506,
+    "votos_proyectados": 9223533,
     "pct_actual": 49.99,
     "pct_proyectado": 50.12,
     "win_probability": 98.8
   },
   "jp": {
-    "votos_actuales": 9011364,
-    "votos_proyectados": 9178576,
+    "votos_actuales": 9011452,
+    "votos_proyectados": 9178575,
     "pct_actual": 50.01,
     "pct_proyectado": 49.88,
     "win_probability": 1.2
@@ -114,8 +114,8 @@
     {
       "ambito": "PERÚ",
       "region": "CALLAO",
-      "fp_votos": 403942,
-      "jp_votos": 211879,
+      "fp_votos": 403921,
+      "jp_votos": 211878,
       "fp_pct": 65.59,
       "jp_pct": 34.41,
       "pct_actas": 97.2
@@ -325,15 +325,15 @@
     {
       "region": "CALLAO",
       "ambito": "PERÚ",
-      "remaining_actas": 69,
-      "remaining_votos": 14649,
-      "fp_remaining_votos": 9535,
-      "jp_remaining_votos": 5114,
-      "net_fp": 4421,
-      "fp_remaining_pct": 65.1,
+      "remaining_actas": 68,
+      "remaining_votos": 14438,
+      "fp_remaining_votos": 9413,
+      "jp_remaining_votos": 5025,
+      "net_fp": 4388,
+      "fp_remaining_pct": 65.2,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 14649
+        "distrito": 14438
       }
     },
     {
@@ -2718,6 +2718,17 @@
     },
     {
       "timestamp": "2026-06-10 18:12:32",
+      "pct_actas": 97.81,
+      "fp_pct_actual": 49.986,
+      "jp_pct_actual": 50.014,
+      "fp_pct_proyectado": 50.122,
+      "jp_pct_proyectado": 49.878,
+      "fp_win_prob": 98.8,
+      "jp_win_prob": 1.2,
+      "margin_mean": 0.121
+    },
+    {
+      "timestamp": "2026-06-10 18:24:41",
       "pct_actas": 97.81,
       "fp_pct_actual": 49.986,
       "jp_pct_actual": 50.014,
