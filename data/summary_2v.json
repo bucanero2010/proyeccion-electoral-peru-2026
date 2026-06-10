@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-10T03:40:39.919303",
+  "timestamp": "2026-06-10T03:52:44.676390",
   "pct_actas": 96.42,
   "fp": {
-    "votos_actuales": 8908362,
-    "votos_proyectados": 9223033,
-    "pct_actual": 49.88,
-    "pct_proyectado": 50.12,
-    "win_probability": 85.93
+    "votos_actuales": 8909993,
+    "votos_proyectados": 9232013,
+    "pct_actual": 49.89,
+    "pct_proyectado": 50.13,
+    "win_probability": 86.77
   },
   "jp": {
-    "votos_actuales": 8949896,
-    "votos_proyectados": 9178434,
-    "pct_actual": 50.12,
-    "pct_proyectado": 49.88,
-    "win_probability": 14.07
+    "votos_actuales": 8951044,
+    "votos_proyectados": 9184280,
+    "pct_actual": 50.11,
+    "pct_proyectado": 49.87,
+    "win_probability": 13.23
   },
   "margin": {
-    "mean": 0.121,
-    "p5": -0.067,
-    "p95": 0.298
+    "mean": 0.129,
+    "p5": -0.063,
+    "p95": 0.313
   },
   "regions": [
     {
@@ -220,6 +220,15 @@
       "pct_actas": 66.8
     },
     {
+      "ambito": "EXTRANJERO",
+      "region": "EUROPA",
+      "fp_votos": 77633,
+      "jp_votos": 56362,
+      "fp_pct": 57.94,
+      "jp_pct": 42.06,
+      "pct_actas": 48.5
+    },
+    {
       "ambito": "PERÚ",
       "region": "PASCO",
       "fp_votos": 51680,
@@ -245,15 +254,6 @@
       "fp_pct": 27.44,
       "jp_pct": 72.56,
       "pct_actas": 99.8
-    },
-    {
-      "ambito": "EXTRANJERO",
-      "region": "EUROPA",
-      "fp_votos": 68653,
-      "jp_votos": 50516,
-      "fp_pct": 57.61,
-      "jp_pct": 42.39,
-      "pct_actas": 48.2
     },
     {
       "ambito": "PERÚ",
@@ -325,16 +325,16 @@
     {
       "region": "EUROPA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 666,
-      "remaining_votos": 95677,
-      "fp_remaining_votos": 56200,
-      "jp_remaining_votos": 39477,
-      "net_fp": 16723,
-      "fp_remaining_pct": 58.7,
+      "remaining_actas": 663,
+      "remaining_votos": 107733,
+      "fp_remaining_votos": 63552,
+      "jp_remaining_votos": 44181,
+      "net_fp": 19371,
+      "fp_remaining_pct": 59.0,
       "favors": "FP",
       "by_fuente": {
         "distrito": 2634,
-        "similitud": 93043
+        "similitud": 105099
       }
     },
     {
@@ -2244,6 +2244,17 @@
       "fp_win_prob": 85.93,
       "jp_win_prob": 14.07,
       "margin_mean": 0.121
+    },
+    {
+      "timestamp": "2026-06-10 03:52:44",
+      "pct_actas": 96.42,
+      "fp_pct_actual": 49.885,
+      "jp_pct_actual": 50.115,
+      "fp_pct_proyectado": 50.13,
+      "jp_pct_proyectado": 49.87,
+      "fp_win_prob": 86.77,
+      "jp_win_prob": 13.23,
+      "margin_mean": 0.129
     }
   ]
 }
