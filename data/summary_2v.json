@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-10T22:15:27.379101",
-  "pct_actas": 97.85,
+  "timestamp": "2026-06-10T22:27:38.731188",
+  "pct_actas": 97.89,
   "fp": {
-    "votos_actuales": 9007908,
-    "votos_proyectados": 9222721,
-    "pct_actual": 49.98,
+    "votos_actuales": 9008462,
+    "votos_proyectados": 9220654,
+    "pct_actual": 49.97,
     "pct_proyectado": 50.13,
-    "win_probability": 99.67
+    "win_probability": 99.87
   },
   "jp": {
-    "votos_actuales": 9014522,
-    "votos_proyectados": 9175004,
-    "pct_actual": 50.02,
+    "votos_actuales": 9017805,
+    "votos_proyectados": 9173336,
+    "pct_actual": 50.03,
     "pct_proyectado": 49.87,
-    "win_probability": 0.33
+    "win_probability": 0.13
   },
   "margin": {
-    "mean": 0.131,
-    "p5": 0.036,
-    "p95": 0.21
+    "mean": 0.128,
+    "p5": 0.037,
+    "p95": 0.205
   },
   "regions": [
     {
@@ -141,11 +141,11 @@
     {
       "ambito": "PERÚ",
       "region": "LORETO",
-      "fp_votos": 216614,
-      "jp_votos": 191864,
-      "fp_pct": 53.03,
-      "jp_pct": 46.97,
-      "pct_actas": 92.3
+      "fp_votos": 214547,
+      "jp_votos": 190196,
+      "fp_pct": 53.01,
+      "jp_pct": 46.99,
+      "pct_actas": 95.3
     },
     {
       "ambito": "PERÚ",
@@ -480,6 +480,21 @@
       }
     },
     {
+      "region": "LORETO",
+      "ambito": "PERÚ",
+      "remaining_actas": 72,
+      "remaining_votos": 8632,
+      "fp_remaining_votos": 4282,
+      "jp_remaining_votos": 4350,
+      "net_fp": -68,
+      "fp_remaining_pct": 49.6,
+      "favors": "JP",
+      "by_fuente": {
+        "distrito": 7175,
+        "similitud": 1457
+      }
+    },
+    {
       "region": "AMAZONAS",
       "ambito": "PERÚ",
       "remaining_actas": 3,
@@ -676,21 +691,6 @@
       }
     },
     {
-      "region": "LORETO",
-      "ambito": "PERÚ",
-      "remaining_actas": 108,
-      "remaining_votos": 16204,
-      "fp_remaining_votos": 6903,
-      "jp_remaining_votos": 9301,
-      "net_fp": -2398,
-      "fp_remaining_pct": 42.6,
-      "favors": "JP",
-      "by_fuente": {
-        "distrito": 6282,
-        "similitud": 9922
-      }
-    },
-    {
       "region": "PUNO",
       "ambito": "PERÚ",
       "remaining_actas": 24,
@@ -720,8 +720,8 @@
     }
   ],
   "fuente_breakdown": {
-    "distrito": 2078,
-    "similitud": 24
+    "distrito": 2080,
+    "similitud": 22
   },
   "history": [
     {
@@ -2747,6 +2747,17 @@
       "fp_win_prob": 99.67,
       "jp_win_prob": 0.33,
       "margin_mean": 0.131
+    },
+    {
+      "timestamp": "2026-06-10 22:27:38",
+      "pct_actas": 97.89,
+      "fp_pct_actual": 49.974,
+      "jp_pct_actual": 50.026,
+      "fp_pct_proyectado": 50.129,
+      "jp_pct_proyectado": 49.871,
+      "fp_win_prob": 99.87,
+      "jp_win_prob": 0.13,
+      "margin_mean": 0.128
     }
   ]
 }
