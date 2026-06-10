@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-10T05:05:18.105878",
-  "pct_actas": 96.58,
+  "timestamp": "2026-06-10T05:17:19.383671",
+  "pct_actas": 96.59,
   "fp": {
-    "votos_actuales": 8920179,
-    "votos_proyectados": 9223605,
+    "votos_actuales": 8921466,
+    "votos_proyectados": 9226456,
     "pct_actual": 49.89,
     "pct_proyectado": 50.11,
-    "win_probability": 84.13
+    "win_probability": 83.53
   },
   "jp": {
-    "votos_actuales": 8960114,
-    "votos_proyectados": 9182213,
+    "votos_actuales": 8961580,
+    "votos_proyectados": 9186467,
     "pct_actual": 50.11,
     "pct_proyectado": 49.89,
-    "win_probability": 15.87
+    "win_probability": 16.47
   },
   "margin": {
-    "mean": 0.113,
-    "p5": -0.068,
-    "p95": 0.29
+    "mean": 0.109,
+    "p5": -0.075,
+    "p95": 0.283
   },
   "regions": [
     {
@@ -141,11 +141,11 @@
     {
       "ambito": "PERÚ",
       "region": "LORETO",
-      "fp_votos": 216992,
-      "jp_votos": 192889,
-      "fp_pct": 52.94,
-      "jp_pct": 47.06,
-      "pct_actas": 89.6
+      "fp_votos": 219731,
+      "jp_votos": 197103,
+      "fp_pct": 52.71,
+      "jp_pct": 47.29,
+      "pct_actas": 89.9
     },
     {
       "ambito": "PERÚ",
@@ -213,11 +213,11 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 118872,
-      "jp_votos": 59767,
-      "fp_pct": 66.54,
-      "jp_pct": 33.46,
-      "pct_actas": 67.1
+      "fp_votos": 118984,
+      "jp_votos": 59808,
+      "fp_pct": 66.55,
+      "jp_pct": 33.45,
+      "pct_actas": 67.7
     },
     {
       "ambito": "PERÚ",
@@ -277,9 +277,9 @@
       "ambito": "EXTRANJERO",
       "region": "ASIA",
       "fp_votos": 1513,
-      "jp_votos": 579,
-      "fp_pct": 72.32,
-      "jp_pct": 27.68,
+      "jp_votos": 578,
+      "fp_pct": 72.36,
+      "jp_pct": 27.64,
       "pct_actas": 42.9
     },
     {
@@ -310,16 +310,16 @@
     {
       "region": "AMÉRICA",
       "ambito": "EXTRANJERO",
-      "remaining_actas": 901,
-      "remaining_votos": 105079,
-      "fp_remaining_votos": 68572,
-      "jp_remaining_votos": 36507,
-      "net_fp": 32065,
-      "fp_remaining_pct": 65.3,
+      "remaining_actas": 894,
+      "remaining_votos": 104412,
+      "fp_remaining_votos": 68102,
+      "jp_remaining_votos": 36310,
+      "net_fp": 31792,
+      "fp_remaining_pct": 65.2,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 4810,
-        "similitud": 100269
+        "distrito": 4091,
+        "similitud": 100321
       }
     },
     {
@@ -398,14 +398,14 @@
       "region": "ASIA",
       "ambito": "EXTRANJERO",
       "remaining_actas": 92,
-      "remaining_votos": 1812,
+      "remaining_votos": 1811,
       "fp_remaining_votos": 1327,
-      "jp_remaining_votos": 485,
-      "net_fp": 842,
-      "fp_remaining_pct": 73.2,
+      "jp_remaining_votos": 484,
+      "net_fp": 843,
+      "fp_remaining_pct": 73.3,
       "favors": "FP",
       "by_fuente": {
-        "ambito": 174,
+        "ambito": 173,
         "similitud": 1638
       }
     },
@@ -692,16 +692,16 @@
     {
       "region": "LORETO",
       "ambito": "PERÚ",
-      "remaining_actas": 151,
-      "remaining_votos": 22678,
-      "fp_remaining_votos": 8722,
-      "jp_remaining_votos": 13956,
-      "net_fp": -5234,
-      "fp_remaining_pct": 38.5,
+      "remaining_actas": 146,
+      "remaining_votos": 27698,
+      "fp_remaining_votos": 10756,
+      "jp_remaining_votos": 16942,
+      "net_fp": -6186,
+      "fp_remaining_pct": 38.8,
       "favors": "JP",
       "by_fuente": {
         "distrito": 7655,
-        "similitud": 15023
+        "similitud": 20043
       }
     },
     {
@@ -2320,6 +2320,17 @@
       "fp_win_prob": 84.13,
       "jp_win_prob": 15.87,
       "margin_mean": 0.113
+    },
+    {
+      "timestamp": "2026-06-10 05:17:19",
+      "pct_actas": 96.59,
+      "fp_pct_actual": 49.888,
+      "jp_pct_actual": 50.112,
+      "fp_pct_proyectado": 50.109,
+      "jp_pct_proyectado": 49.891,
+      "fp_win_prob": 83.53,
+      "jp_win_prob": 16.47,
+      "margin_mean": 0.109
     }
   ]
 }
