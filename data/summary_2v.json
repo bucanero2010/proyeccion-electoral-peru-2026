@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-10T02:03:56.565188",
-  "pct_actas": 96.38,
+  "timestamp": "2026-06-10T02:16:03.538094",
+  "pct_actas": 96.4,
   "fp": {
-    "votos_actuales": 8907090,
-    "votos_proyectados": 9223054,
+    "votos_actuales": 8907648,
+    "votos_proyectados": 9223897,
     "pct_actual": 49.88,
     "pct_proyectado": 50.12,
-    "win_probability": 86.17
+    "win_probability": 87.1
   },
   "jp": {
-    "votos_actuales": 8949301,
-    "votos_proyectados": 9178654,
+    "votos_actuales": 8949521,
+    "votos_proyectados": 9178609,
     "pct_actual": 50.12,
     "pct_proyectado": 49.88,
-    "win_probability": 13.83
+    "win_probability": 12.9
   },
   "margin": {
-    "mean": 0.122,
-    "p5": -0.068,
-    "p95": 0.298
+    "mean": 0.123,
+    "p5": -0.051,
+    "p95": 0.3
   },
   "regions": [
     {
@@ -141,11 +141,11 @@
     {
       "ambito": "PERÚ",
       "region": "LORETO",
-      "fp_votos": 217591,
-      "jp_votos": 193305,
-      "fp_pct": 52.96,
-      "jp_pct": 47.04,
-      "pct_actas": 88.1
+      "fp_votos": 217355,
+      "jp_votos": 192865,
+      "fp_pct": 52.98,
+      "jp_pct": 47.02,
+      "pct_actas": 88.7
     },
     {
       "ambito": "PERÚ",
@@ -266,21 +266,21 @@
     },
     {
       "ambito": "EXTRANJERO",
+      "region": "ASIA",
+      "fp_votos": 2023,
+      "jp_votos": 774,
+      "fp_pct": 72.33,
+      "jp_pct": 27.67,
+      "pct_actas": 22.9
+    },
+    {
+      "ambito": "EXTRANJERO",
       "region": "OCEANÍA",
       "fp_votos": 1462,
       "jp_votos": 787,
       "fp_pct": 65.01,
       "jp_pct": 34.99,
       "pct_actas": 69.8
-    },
-    {
-      "ambito": "EXTRANJERO",
-      "region": "ASIA",
-      "fp_votos": 944,
-      "jp_votos": 379,
-      "fp_pct": 71.35,
-      "jp_pct": 28.65,
-      "pct_actas": 14.3
     },
     {
       "ambito": "EXTRANJERO",
@@ -380,6 +380,21 @@
       }
     },
     {
+      "region": "ASIA",
+      "ambito": "EXTRANJERO",
+      "remaining_actas": 99,
+      "remaining_votos": 2595,
+      "fp_remaining_votos": 1883,
+      "jp_remaining_votos": 712,
+      "net_fp": 1171,
+      "fp_remaining_pct": 72.6,
+      "favors": "FP",
+      "by_fuente": {
+        "ambito": 236,
+        "similitud": 2359
+      }
+    },
+    {
       "region": "UCAYALI",
       "ambito": "PERÚ",
       "remaining_actas": 43,
@@ -406,21 +421,6 @@
       "favors": "FP",
       "by_fuente": {
         "distrito": 2744
-      }
-    },
-    {
-      "region": "ASIA",
-      "ambito": "EXTRANJERO",
-      "remaining_actas": 102,
-      "remaining_votos": 1263,
-      "fp_remaining_votos": 914,
-      "jp_remaining_votos": 349,
-      "net_fp": 565,
-      "fp_remaining_pct": 72.4,
-      "favors": "FP",
-      "by_fuente": {
-        "ambito": 110,
-        "similitud": 1153
       }
     },
     {
@@ -693,16 +693,16 @@
     {
       "region": "LORETO",
       "ambito": "PERÚ",
-      "remaining_actas": 170,
-      "remaining_votos": 25340,
-      "fp_remaining_votos": 10437,
-      "jp_remaining_votos": 14903,
-      "net_fp": -4466,
-      "fp_remaining_pct": 41.2,
+      "remaining_actas": 163,
+      "remaining_votos": 24030,
+      "fp_remaining_votos": 9753,
+      "jp_remaining_votos": 14277,
+      "net_fp": -4524,
+      "fp_remaining_pct": 40.6,
       "favors": "JP",
       "by_fuente": {
-        "distrito": 7655,
-        "similitud": 17685
+        "distrito": 8976,
+        "similitud": 15054
       }
     },
     {
@@ -722,8 +722,8 @@
     }
   ],
   "fuente_breakdown": {
-    "distrito": 2000,
-    "similitud": 96,
+    "distrito": 2004,
+    "similitud": 92,
     "ambito": 6
   },
   "history": [
@@ -2156,6 +2156,17 @@
       "fp_win_prob": 86.17,
       "jp_win_prob": 13.83,
       "margin_mean": 0.122
+    },
+    {
+      "timestamp": "2026-06-10 02:16:03",
+      "pct_actas": 96.4,
+      "fp_pct_actual": 49.883,
+      "jp_pct_actual": 50.117,
+      "fp_pct_proyectado": 50.123,
+      "jp_pct_proyectado": 49.877,
+      "fp_win_prob": 87.1,
+      "jp_win_prob": 12.9,
+      "margin_mean": 0.123
     }
   ]
 }
