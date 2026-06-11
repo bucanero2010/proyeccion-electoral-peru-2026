@@ -1,24 +1,24 @@
 {
-  "timestamp": "2026-06-11T05:43:08.111575",
-  "pct_actas": 98.18,
+  "timestamp": "2026-06-11T05:55:11.331214",
+  "pct_actas": 98.22,
   "fp": {
-    "votos_actuales": 9032613,
-    "votos_proyectados": 9229129,
+    "votos_actuales": 9032775,
+    "votos_proyectados": 9225541,
     "pct_actual": 50.0,
     "pct_proyectado": 50.14,
     "win_probability": 100.0
   },
   "jp": {
-    "votos_actuales": 9032275,
-    "votos_proyectados": 9176029,
+    "votos_actuales": 9032394,
+    "votos_proyectados": 9173876,
     "pct_actual": 50.0,
     "pct_proyectado": 49.86,
     "win_probability": 0.0
   },
   "margin": {
-    "mean": 0.144,
-    "p5": 0.109,
-    "p95": 0.177
+    "mean": 0.14,
+    "p5": 0.104,
+    "p95": 0.175
   },
   "regions": [
     {
@@ -213,11 +213,11 @@
     {
       "ambito": "EXTRANJERO",
       "region": "AMÉRICA",
-      "fp_votos": 125809,
-      "jp_votos": 63286,
-      "fp_pct": 66.53,
-      "jp_pct": 33.47,
-      "pct_actas": 95.3
+      "fp_votos": 122221,
+      "jp_votos": 61133,
+      "fp_pct": 66.66,
+      "jp_pct": 33.34,
+      "pct_actas": 96.8
     },
     {
       "ambito": "PERÚ",
@@ -308,21 +308,6 @@
       }
     },
     {
-      "region": "AMÉRICA",
-      "ambito": "EXTRANJERO",
-      "remaining_actas": 119,
-      "remaining_votos": 16983,
-      "fp_remaining_votos": 10891,
-      "jp_remaining_votos": 6092,
-      "net_fp": 4799,
-      "fp_remaining_pct": 64.1,
-      "favors": "FP",
-      "by_fuente": {
-        "distrito": 16599,
-        "similitud": 384
-      }
-    },
-    {
       "region": "CALLAO",
       "ambito": "PERÚ",
       "remaining_actas": 67,
@@ -334,6 +319,21 @@
       "favors": "FP",
       "by_fuente": {
         "distrito": 14229
+      }
+    },
+    {
+      "region": "AMÉRICA",
+      "ambito": "EXTRANJERO",
+      "remaining_actas": 84,
+      "remaining_votos": 10957,
+      "fp_remaining_votos": 7141,
+      "jp_remaining_votos": 3816,
+      "net_fp": 3325,
+      "fp_remaining_pct": 65.2,
+      "favors": "FP",
+      "by_fuente": {
+        "distrito": 10585,
+        "similitud": 372
       }
     },
     {
@@ -717,8 +717,8 @@
     }
   ],
   "fuente_breakdown": {
-    "distrito": 2097,
-    "similitud": 5
+    "distrito": 2098,
+    "similitud": 4
   },
   "history": [
     {
@@ -3151,6 +3151,17 @@
       "fp_win_prob": 100.0,
       "jp_win_prob": 0.0,
       "margin_mean": 0.144
+    },
+    {
+      "timestamp": "2026-06-11 05:55:11",
+      "pct_actas": 98.22,
+      "fp_pct_actual": 50.001,
+      "jp_pct_actual": 49.999,
+      "fp_pct_proyectado": 50.14,
+      "jp_pct_proyectado": 49.86,
+      "fp_win_prob": 100.0,
+      "jp_win_prob": 0.0,
+      "margin_mean": 0.14
     }
   ]
 }
