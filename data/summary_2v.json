@@ -1,23 +1,23 @@
 {
-  "timestamp": "2026-06-11T18:59:00.354569",
+  "timestamp": "2026-06-11T19:10:27.744040",
   "pct_actas": 98.23,
   "fp": {
-    "votos_actuales": 9033323,
-    "votos_proyectados": 9224800,
+    "votos_actuales": 9033584,
+    "votos_proyectados": 9224819,
     "pct_actual": 50.0,
     "pct_proyectado": 50.14,
     "win_probability": 100.0
   },
   "jp": {
-    "votos_actuales": 9032782,
-    "votos_proyectados": 9173590,
+    "votos_actuales": 9032935,
+    "votos_proyectados": 9173565,
     "pct_actual": 50.0,
     "pct_proyectado": 49.86,
     "win_probability": 0.0
   },
   "margin": {
     "mean": 0.139,
-    "p5": 0.104,
+    "p5": 0.105,
     "p95": 0.173
   },
   "regions": [
@@ -114,8 +114,8 @@
     {
       "ambito": "PERÚ",
       "region": "CALLAO",
-      "fp_votos": 403923,
-      "jp_votos": 211900,
+      "fp_votos": 403942,
+      "jp_votos": 211875,
       "fp_pct": 65.59,
       "jp_pct": 34.41,
       "pct_actas": 97.3
@@ -310,15 +310,15 @@
     {
       "region": "CALLAO",
       "ambito": "PERÚ",
-      "remaining_actas": 67,
-      "remaining_votos": 14229,
-      "fp_remaining_votos": 9292,
-      "jp_remaining_votos": 4937,
-      "net_fp": 4355,
-      "fp_remaining_pct": 65.3,
+      "remaining_actas": 65,
+      "remaining_votos": 13809,
+      "fp_remaining_votos": 9050,
+      "jp_remaining_votos": 4759,
+      "net_fp": 4291,
+      "fp_remaining_pct": 65.5,
       "favors": "FP",
       "by_fuente": {
-        "distrito": 14229
+        "distrito": 13809
       }
     },
     {
@@ -3893,6 +3893,17 @@
       "pct_actas": 98.23,
       "fp_pct_actual": 50.001,
       "jp_pct_actual": 49.999,
+      "fp_pct_proyectado": 50.139,
+      "jp_pct_proyectado": 49.861,
+      "fp_win_prob": 100.0,
+      "jp_win_prob": 0.0,
+      "margin_mean": 0.139
+    },
+    {
+      "timestamp": "2026-06-11 19:10:27",
+      "pct_actas": 98.23,
+      "fp_pct_actual": 50.002,
+      "jp_pct_actual": 49.998,
       "fp_pct_proyectado": 50.139,
       "jp_pct_proyectado": 49.861,
       "fp_win_prob": 100.0,
